@@ -3,17 +3,17 @@ package org.kontinuity.catapult.core.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
 import org.kontinuity.catapult.core.api.Boom;
 import org.kontinuity.catapult.core.api.Catapult;
 import org.kontinuity.catapult.core.api.Projectile;
-import org.kontinuity.catapult.service.github.api.GitHubRepository;
-import org.kontinuity.catapult.service.github.api.GitHubService;
-import org.kontinuity.catapult.service.github.api.GitHubServiceFactory;
-import org.kontinuity.catapult.service.github.api.GitHubWebhook;
-import org.kontinuity.catapult.service.github.api.GitHubWebhookEvent;
+import org.kontinuity.catapult.service.github.api.*;
+import org.kontinuity.catapult.service.github.impl.kohsuke.KohsukeGitHubServiceImpl;
+import org.kontinuity.catapult.service.github.spi.GitHubServiceSpi;
 import org.kontinuity.catapult.service.openshift.api.DuplicateProjectException;
 import org.kontinuity.catapult.service.openshift.api.OpenShiftProject;
 import org.kontinuity.catapult.service.openshift.api.OpenShiftService;
@@ -24,6 +24,8 @@ import org.kontinuity.catapult.service.openshift.api.OpenShiftService;
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  */
 public class CatapultImpl implements Catapult {
+
+    private static final Logger log = Logger.getLogger(CatapultImpl.class.getName());
 
 	@Inject
 	private OpenShiftService openShiftService;
@@ -55,7 +57,7 @@ public class CatapultImpl implements Catapult {
         // Create a new OpenShift project for the user
         final String projectName = projectile.getOpenShiftProjectName();
         final OpenShiftProject createdProject;
-        final GitHubWebhook webhook;
+        GitHubWebhook webhook;
         try {
             createdProject = openShiftService.createProject(projectName);
 
@@ -82,11 +84,18 @@ public class CatapultImpl implements Catapult {
                     projectile.getGitRef(),
                     pipelineTemplateUri);
             final URL webhookUrl = createdProject.getWebhookUrl(openShiftService.getApiUrl());
-			if(webhookUrl != null) {
-				webhook = gitHubService.createWebhook(forkedRepo, webhookUrl, GitHubWebhookEvent.PUSH);
-			} else {
-				webhook = null;
-			}
+            if (webhookUrl != null) {
+                try {
+                    webhook = gitHubService.createWebhook(forkedRepo, webhookUrl, GitHubWebhookEvent.PUSH);
+                } catch (final DuplicateWebhookException dpe) {
+                    // Swallow, it's OK, we've already forked this repo
+                    log.log(Level.INFO, dpe.getMessage());
+                    webhook = ((GitHubServiceSpi) gitHubService)
+                            .getWebhook(forkedRepo, webhookUrl);
+                }
+            } else {
+                webhook = null;
+            }
 
         } catch (final DuplicateProjectException dpe) {
             //TODO
@@ -97,11 +106,6 @@ public class CatapultImpl implements Catapult {
              */
             throw dpe;
         }
-
-        //TODO
-        /* Register a GitHub webhook in the user's repo to kick the OpenShift project
-            https://github.com/redhat-kontinuity/catapult/issues/40
-        */
 
         // Return information needed to continue flow to the user
         final Boom boom = new BoomImpl(forkedRepo, createdProject, webhook);

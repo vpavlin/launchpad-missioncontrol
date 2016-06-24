@@ -3,6 +3,9 @@ package org.kontinuity.catapult.service.github.spi;
 import org.kontinuity.catapult.service.github.api.GitHubRepository;
 import org.kontinuity.catapult.service.github.api.GitHubService;
 import org.kontinuity.catapult.service.github.api.GitHubWebhook;
+import org.kontinuity.catapult.service.github.api.NoSuchWebhookException;
+
+import java.net.URL;
 
 /**
  * SPI on top of GitHubService to provide with operations that are not exposed
@@ -37,7 +40,18 @@ public interface GitHubServiceSpi extends GitHubService {
      * @throws IllegalArgumentException
      */
     void deleteRepository(String repositoryName) throws IllegalArgumentException;
-    
+
+   /**
+    * Returns the webhook with the specified url on the specified repository
+    * @param repository
+    * @param url
+    * @throws IllegalArgumentException If either the repository or name are not specified
+    * @throws NoSuchWebhookException If the webhook does not exist for this repo
+    * @return
+    */
+    GitHubWebhook getWebhook(GitHubRepository repository, URL url)
+            throws IllegalArgumentException, NoSuchWebhookException;
+
     /**
      * Deletes a webhook in a specific GitHub repository
      * 

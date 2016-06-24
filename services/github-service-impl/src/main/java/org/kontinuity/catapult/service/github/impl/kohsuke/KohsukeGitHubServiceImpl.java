@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -15,11 +16,7 @@ import org.kohsuke.github.GHEvent;
 import org.kohsuke.github.GHHook;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
-import org.kontinuity.catapult.service.github.api.GitHubRepository;
-import org.kontinuity.catapult.service.github.api.GitHubService;
-import org.kontinuity.catapult.service.github.api.GitHubWebhook;
-import org.kontinuity.catapult.service.github.api.GitHubWebhookEvent;
-import org.kontinuity.catapult.service.github.api.NoSuchRepositoryException;
+import org.kontinuity.catapult.service.github.api.*;
 import org.kontinuity.catapult.service.github.spi.GitHubServiceSpi;
 
 /**
@@ -32,7 +29,7 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
 
     private static final String WEBHOOK_URL = "url";
 
-	private static final String GITHUB_WEBHOOK_WEB = "web";
+	public static final String GITHUB_WEBHOOK_WEB = "web";
 
     private static final Logger log = Logger.getLogger(KohsukeGitHubServiceImpl.class.getName());
 
@@ -198,14 +195,48 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
                     githubEvents,
                     true);
         } catch (final IOException ioe) {
+           if(ioe instanceof FileNotFoundException)
+           {
+              final FileNotFoundException fnfe = (FileNotFoundException)ioe;
+              fnfe.getMessage().contains("Hook already exists on this repository");
+              throw DuplicateWebhookException.getInstance(webhookUrl);
+           }
             throw new RuntimeException(ioe);
         }
 
         final GitHubWebhook githubWebhook = new KohsukeGitHubWebhook(webhook);
     	return githubWebhook;
     }
-    
-    /**
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public GitHubWebhook getWebhook(final GitHubRepository repository,
+                                   final URL url)
+           throws IllegalArgumentException, NoSuchWebhookException {
+      if(repository==null){
+         throw new IllegalArgumentException("repository must be specified");
+      }
+      if(url==null){
+         throw new IllegalArgumentException("url must be specified");
+      }
+      final List<GHHook> hooks;
+      try{
+         hooks = delegate.getRepository(repository.getFullName()).getHooks();
+      }catch(final IOException ioe){
+         throw new RuntimeException("Could not get webhooks for repository " + repository.getFullName(), ioe);
+      }
+      final GHHook found;
+      try {
+         found = hooks.stream().filter(hook -> hook.getConfig().get(WEBHOOK_URL).equals(url.toString())).findFirst().get();
+      } catch (final NoSuchElementException snee) {
+         throw NoSuchWebhookException.getInstance(repository, url);
+      }
+      return new KohsukeGitHubWebhook(found);
+   }
+
+   /**
      * {@inheritDoc}
      */
     @Override

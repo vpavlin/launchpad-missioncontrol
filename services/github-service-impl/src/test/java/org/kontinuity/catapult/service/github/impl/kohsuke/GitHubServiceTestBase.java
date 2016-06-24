@@ -11,11 +11,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.kontinuity.catapult.service.github.api.GitHubRepository;
-import org.kontinuity.catapult.service.github.api.GitHubService;
-import org.kontinuity.catapult.service.github.api.GitHubWebhook;
-import org.kontinuity.catapult.service.github.api.GitHubWebhookEvent;
-import org.kontinuity.catapult.service.github.api.NoSuchRepositoryException;
+import org.kontinuity.catapult.service.github.api.*;
 import org.kontinuity.catapult.service.github.spi.GitHubServiceSpi;
 import org.kontinuity.catapult.service.github.test.GitHubTestCredentials;
 
@@ -133,5 +129,39 @@ abstract class GitHubServiceTestBase {
         Assert.assertNotNull(webhook);
         Assert.assertEquals(webhookUrl.toString(), webhook.getUrl());
     }
+
+   @Test
+   public void getGithubWebHook() throws Exception {
+      // given
+      final String repositoryName = generateRepositoryName();
+      final URL webhookUrl = new URL("https://10.1.2.2");
+      final GitHubRepository targetRepo = ((GitHubServiceSpi)getGitHubService()).createRepository(repositoryName, MY_GITHUB_REPO_DESCRIPTION);
+      // when
+      final GitHubWebhook webhook = getGitHubService().createWebhook(targetRepo, webhookUrl, GitHubWebhookEvent.ALL);
+      // then
+      final GitHubWebhook roundtrip = ((GitHubServiceSpi) getGitHubService()).getWebhook(targetRepo,webhookUrl);
+      Assert.assertNotNull("Could not get webhook we just created", roundtrip);
+   }
+
+   @Test(expected = NoSuchWebhookException.class)
+   public void throwExceptionOnNoSuchWebhook() throws Exception {
+      // given
+      final String repositoryName = generateRepositoryName();
+      final URL fakeWebhookUrl = new URL("http://totallysomethingIMadeUp.com");
+      final GitHubRepository targetRepo = ((GitHubServiceSpi) getGitHubService()).createRepository(repositoryName, MY_GITHUB_REPO_DESCRIPTION);
+      // Try to get the webhook which does not exist.  Expect exception.
+      ((GitHubServiceSpi) getGitHubService()).getWebhook(targetRepo, fakeWebhookUrl);
+   }
+
+   @Test(expected = DuplicateWebhookException.class)
+   public void throwExceptionOnDuplicateWebhook() throws Exception {
+      // given
+      final String repositoryName = generateRepositoryName();
+      final URL webhookUrl = new URL("https://10.1.2.2");
+      final GitHubRepository targetRepo = ((GitHubServiceSpi) getGitHubService()).createRepository(repositoryName, MY_GITHUB_REPO_DESCRIPTION);
+      // Create the webhook.  Twice.  Expect exception
+      getGitHubService().createWebhook(targetRepo, webhookUrl, GitHubWebhookEvent.ALL);
+      getGitHubService().createWebhook(targetRepo, webhookUrl, GitHubWebhookEvent.ALL);
+   }
 
 }
