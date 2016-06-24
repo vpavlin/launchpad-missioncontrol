@@ -25,7 +25,7 @@ public class CatapultConsoleIT extends CatapultITBase {
 
    private static final Logger log = Logger.getLogger(CatapultConsoleIT.class.getName());
 
-   private static final String SOURCE_REPO = "tnozicka/jboss-eap-quickstarts";
+   private static final String SOURCE_REPO = "redhat-kontinuity/jboss-eap-quickstarts";
 
    @Deployment(name = "real", testable = false)
    public static WebArchive getRealDeployment() {

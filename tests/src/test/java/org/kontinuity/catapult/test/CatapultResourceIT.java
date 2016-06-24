@@ -26,8 +26,8 @@ public class CatapultResourceIT extends CatapultITBase {
     * Name of the repo on GitHub to fork into our user namespace
     */
    //TODO #135 Clean up reliance on tnozicka stuff
-   private static final String SOURCE_REPO = "tnozicka/jboss-eap-quickstarts";
-   private static final String GIT_REF = "sync-WIP";
+   private static final String SOURCE_REPO = "redhat-kontinuity/jboss-eap-quickstarts";
+   private static final String GIT_REF = "kontinu8";
    private static final String PIPELINE_TEMPLATE_PATH = "helloworld/.openshift-ci_cd/pipeline-template.yaml";
 
    @Deployment(name = "real", testable = false)
