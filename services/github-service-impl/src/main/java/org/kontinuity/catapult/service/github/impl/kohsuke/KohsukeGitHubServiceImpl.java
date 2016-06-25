@@ -29,6 +29,9 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
 
     private static final String WEBHOOK_URL = "url";
 
+   private static final String WEBHOOK_CONFIG_PROP_INSECURE_SSL_NAME = "insecure_ssl";
+   private static final String WEBHOOK_CONFIG_PROP_INSECURE_SSL_VALUE = "1";
+
 	public static final String GITHUB_WEBHOOK_WEB = "web";
 
     private static final Logger log = Logger.getLogger(KohsukeGitHubServiceImpl.class.getName());
@@ -184,6 +187,7 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
         Map<String, String> configuration = new HashMap<>();
     	configuration.put(WEBHOOK_URL, webhookUrl.toString());
     	configuration.put("content_type", "json");
+       configuration.put(WEBHOOK_CONFIG_PROP_INSECURE_SSL_NAME, WEBHOOK_CONFIG_PROP_INSECURE_SSL_VALUE);
 
         List<GHEvent> githubEvents = Stream.of(events).map(event -> GHEvent.valueOf(event.name())).collect(Collectors.toList());
 
