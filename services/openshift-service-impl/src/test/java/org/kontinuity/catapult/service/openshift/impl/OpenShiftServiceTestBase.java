@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.kontinuity.catapult.service.openshift.api.DuplicateProjectException;
 import org.kontinuity.catapult.service.openshift.api.OpenShiftProject;
+import org.kontinuity.catapult.service.openshift.api.OpenShiftSettings;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -63,8 +64,8 @@ public abstract class OpenShiftServiceTestBase implements OpenShiftServiceContai
 		assertEquals("returned project did not have expected name", projectName, actualName);
 		assertThat(project.getResources()).isNotNull().hasSize(1);
 		assertTrue(project.getResources().get(0).getKind().equals("BuildConfig"));
-		assertEquals(project.getWebhookUrl(getOpenShiftService().getApiUrl()),
-		        new URL(getOpenShiftService().getApiUrl().toExternalForm()
+		assertEquals(getOpenShiftService().getWebhookUrl(project),
+		        new URL(OpenShiftSettings.getOpenShiftConsoleUrl()
 		                + "/oapi/v1/namespaces/" + project.getName() + "/buildconfigs/helloworld-pipeline/webhooks/kontinu8/github"));
     }
     

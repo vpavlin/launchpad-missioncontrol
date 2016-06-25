@@ -27,18 +27,22 @@ public class OpenShiftServiceProducer {
 	 */
 	@Produces
 	public OpenShiftService create() {
-		final String openShiftUrl = OpenShiftSettings.getOpenShiftApiUrl();
+		final String openShiftApiUrl = OpenShiftSettings.getOpenShiftApiUrl();
+		final String openshiftConsoleUrl = OpenShiftSettings.getOpenShiftConsoleUrl();
 
 		// Precondition checks
-		if (openShiftUrl == null) {
+		if (openShiftApiUrl == null) {
 			throw new IllegalArgumentException("openshiftUrl is required");
+		}
+		if (openshiftConsoleUrl == null) {
+			throw new IllegalArgumentException("openshiftConsoleUrl is required");
 		}
 
 		// Create and return
 		if (log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, "Created backing OpenShift client for " + openShiftUrl);
+            log.log(Level.FINEST, "Created backing OpenShift client for " + openShiftApiUrl);
         }
-		return new Fabric8OpenShiftClientServiceImpl(openShiftUrl);
+		return new Fabric8OpenShiftClientServiceImpl(openShiftApiUrl,openshiftConsoleUrl);
 	}
 
 }

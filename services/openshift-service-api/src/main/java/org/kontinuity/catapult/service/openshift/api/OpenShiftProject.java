@@ -24,13 +24,4 @@ public interface OpenShiftProject {
     * @return an unmodifiable copy of the list of {@link OpenShiftResource} for this project
     */
    List<OpenShiftResource> getResources();
-   
-   
-   	/**
-	 * @param apiUrl the URL to the API on OpenShift
-   	 * @return the webhook URL associated with the Build Configuration, which
-	 *         GitHub can use to trigger a build upon change pushes.
-	 */
-   URL getWebhookUrl(URL apiUrl);
-
 }

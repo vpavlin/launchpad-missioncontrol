@@ -37,8 +37,10 @@ public interface OpenShiftService {
                           URI pipelineTemplateUri);
 
     /**
-     * @return the URL of the OpenShift API 
+     * @param project The project for which to construct a webhook URL
+     * @return the webhook URL associated with the Build Configuration, which
+     * GitHub can use to trigger a build upon change pushes.
+     * @throws IllegalArgumentException If the project is not specified
      */
-	URL getApiUrl();
-
+    URL getWebhookUrl(final OpenShiftProject project) throws IllegalArgumentException;
 }

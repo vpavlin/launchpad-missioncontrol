@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -50,19 +51,29 @@ public final class Fabric8OpenShiftClientServiceImpl implements OpenShiftService
     private final OpenShiftClient client;
 
     private final URL apiUrl;
+
+    private final URL consoleUrl;
+
     /**
      * Creates an {@link OpenShiftService} implementation communicating
      * with the backend service via the specified, required apiUrl
      *
      * @param apiUrl
+     * @param consoleUrl
      */
-    Fabric8OpenShiftClientServiceImpl(final String apiUrl) {
+    Fabric8OpenShiftClientServiceImpl(final String apiUrl, final String consoleUrl) {
         assert apiUrl != null && !apiUrl.isEmpty() : "apiUrl is required";
+       assert consoleUrl != null && !consoleUrl.isEmpty() : "consoleUrl is required";
         try {
 			this.apiUrl = new URL(apiUrl);
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
+       try {
+          this.consoleUrl = new URL(consoleUrl);
+       } catch (MalformedURLException e) {
+          throw new RuntimeException(e);
+       }
         final Config config = new ConfigBuilder().
                 withMasterUrl(apiUrl).
                 withUsername("admin"). //TODO externalize or account for this?
@@ -147,8 +158,41 @@ public final class Fabric8OpenShiftClientServiceImpl implements OpenShiftService
 		} catch (final Exception e) {
 			throw new RuntimeException("Could not create OpenShift pipeline", e);
 		}
-
     }
+
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public URL getWebhookUrl(final OpenShiftProject project) throws IllegalArgumentException {
+      final URL openshiftConsoleUrl = this.getConsoleUrl();
+      final Optional<OpenShiftResource> optionalBuildConfig = project.getResources().stream()
+              .filter(r -> r.getKind()
+                      .equals("BuildConfig")).findFirst();
+      if(optionalBuildConfig.isPresent()) {
+         final OpenShiftResource buildConfig = optionalBuildConfig.get();
+         // create a webhook on
+         // https://<OS_IP>:<OS_PORT>/oapi/v1/namespaces/<project>/buildconfigs/<BC-name/webhooks/<secret>/github
+         // FIXME: assuming that the webhook secret is
+         // 'Kontinu8' as specified in
+         // https://github.com/redhat-kontinuity/jboss-eap-quickstarts/blob/kontinu8/helloworld/.openshift-ci_cd/pipeline-template.yaml#L18
+         final String secret = "kontinu8";
+         final String webhookContext = new StringBuilder().append("/oapi/v1/namespaces/")
+                 .append(project.getName()).append("/buildconfigs/")
+                 .append(buildConfig.getName()).append("/webhooks/").append(secret).append("/github")
+                 .toString();
+         try {
+            return new URL(openshiftConsoleUrl.getProtocol(), openshiftConsoleUrl.getHost(),
+                    openshiftConsoleUrl.getPort(), webhookContext);
+         } catch (MalformedURLException e) {
+            throw new RuntimeException("Failed to create Webhook URL for project '" + project.getName()
+                    + "' using the OpenShift API URL '" + openshiftConsoleUrl.toExternalForm()
+                    + "' and the webhook context '" + webhookContext + "'", e);
+         }
+      }
+      return null;
+   }
 
     /**
      * {@inheritDoc}
@@ -179,9 +223,8 @@ public final class Fabric8OpenShiftClientServiceImpl implements OpenShiftService
         }
         return deleted;
     }
-    
-    @Override
-    public URL getApiUrl() {
-    	return this.apiUrl;
-    }
+
+   private URL getConsoleUrl() {
+      return consoleUrl;
+   }
 }

@@ -83,7 +83,7 @@ public class CatapultImpl implements Catapult {
                     forkedRepo.getGitCloneUri(),
                     projectile.getGitRef(),
                     pipelineTemplateUri);
-            final URL webhookUrl = createdProject.getWebhookUrl(openShiftService.getApiUrl());
+            final URL webhookUrl = openShiftService.getWebhookUrl(createdProject);
             if (webhookUrl != null) {
                 try {
                     webhook = gitHubService.createWebhook(forkedRepo, webhookUrl, GitHubWebhookEvent.PUSH);
