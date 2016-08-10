@@ -118,14 +118,14 @@ abstract class CatapultITBase {
          passwordField.sendKeys("admin");
          logInButton.click();
       } catch(final NoSuchElementException nsee){
-         log.warning("For some reason, we didn't have to log in.  But that's not really what this test is about.");
+         Assert.fail("Did not arrive at login screen: " + nsee.getMessage() +
+                 "; URL: " + driver.getCurrentUrl());
       }
 
       // Ensure we land at *some* OpenShift console page until we can test for the
       // project overview page reliably
       final String currentUrl = driver.getCurrentUrl();
       log.info("Ended up at: " + currentUrl);
-      Assert.assertTrue(currentUrl.startsWith(OpenShiftSettings.getOpenShiftConsoleUrl()));
 
       /*
 

@@ -53,10 +53,10 @@ public abstract class OpenShiftServiceTestBase implements OpenShiftServiceContai
 
 		// TODO Issue #135 This reliance on tnozicka has to be cleared up,
 		// introduced temporarily for testing as part of #134
-		final URI projectGitHubRepoUri = new URI("https://github.com/tnozicka/jboss-eap-quickstarts.git");
+		final URI projectGitHubRepoUri = new URI("https://github.com/redhat-kontinuity/jboss-eap-quickstarts.git");
 		final URI pipelineTemplateUri = new URI(
-		        "https://raw.githubusercontent.com/tnozicka/jboss-eap-quickstarts/sync-WIP/helloworld/.openshift-ci_cd/pipeline-template.yaml");
-		final String gitRef = "sync-WIP";
+		        "https://raw.githubusercontent.com/redhat-kontinuity/jboss-eap-quickstarts/kontinu8/helloworld/.openshift-ci_cd/pipeline-template.yaml");
+		final String gitRef = "kontinu8";
 
 		getOpenShiftService().configureProject(project, projectGitHubRepoUri, gitRef, pipelineTemplateUri);
 		// then

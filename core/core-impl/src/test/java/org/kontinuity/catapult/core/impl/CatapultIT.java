@@ -47,8 +47,8 @@ public class CatapultIT {
 
     //TODO #135 Remove reliance on tzonicka
     private static final String GITHUB_SOURCE_REPO_NAME = "jboss-eap-quickstarts";
-    private static final String GITHUB_SOURCE_REPO_FULLNAME = "tnozicka/" + GITHUB_SOURCE_REPO_NAME;
-    private static final String GIT_REF = "sync-WIP";
+    private static final String GITHUB_SOURCE_REPO_FULLNAME = "redhat-kontinuity/" + GITHUB_SOURCE_REPO_NAME;
+    private static final String GIT_REF = "kontinu8";
     private static final String PIPELINE_TEMPLATE_PATH = "helloworld/.openshift-ci_cd/pipeline-template.yaml";
 
     private final Collection<String> openshiftProjectsToDelete = new ArrayList<>();

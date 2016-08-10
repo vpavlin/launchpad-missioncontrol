@@ -105,7 +105,8 @@ Prerequisites to Run Integration Tests
         * `oc login`
             * Use `admin`/`admin` as the username/password
         * Add Jenkins Template Support
-            * `oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/jenkinstemplate.json -n openshift`
+            * When Using ADB: `oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/jenkinstemplate.json -n openshift`
+            * When Building Locally : `oc create --config=openshift.local.config/master/admin.kubeconfig -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/jenkinstemplate.json -n openshift`            
 
 Build and Run the Unit Tests
 ----------------------------
