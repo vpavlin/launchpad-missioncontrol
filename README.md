@@ -108,6 +108,14 @@ Prerequisites to Run Integration Tests
             * When Using ADB: `oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/jenkinstemplate.json -n openshift`
             * When Building Locally : `oc create --config=openshift.local.config/master/admin.kubeconfig -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/jenkinstemplate.json -n openshift`            
 
+5. Configure Local Environment
+
+    By default, the Catapult console will display known pipelinable applications as read from the application store repository located at:
+    
+      `https://raw.githubusercontent.com/redhat-kontinuity/appstore/master/appstore.json`
+      
+    To override this default repository location, set the environment variable or the system property `CATAPULT_APPSTORE_URL`.  If both are set, the system property will take precedence. 
+
 Build and Run the Unit Tests
 ----------------------------
 

@@ -30,12 +30,12 @@ public class GitHubResourceConfig {
 	@Produces
 	@CatapultAppId
 	public String getCatapultApplicationId() {
-		return EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(ENV_VAR_SYS_PROP_NAME_GITHUB_CLIENT_ID);
+		return EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(ENV_VAR_SYS_PROP_NAME_GITHUB_CLIENT_ID);
 	}
 
 	@Produces
 	@CatapultAppOAuthSecret
 	public String getCatapultApplicationOAuthSecret() {
-		return EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(ENV_VAR_SYS_PROP_NAME_GITHUB_CLIENT_SECRET);
+		return EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(ENV_VAR_SYS_PROP_NAME_GITHUB_CLIENT_SECRET);
 	}
 }

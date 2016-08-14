@@ -42,6 +42,13 @@
             "displayName": "OpenShift Console URL",
             "required": true,
             "value": "https://10.1.2.2:8443"
+        },
+        {
+            "name": "CATAPULT_APPSTORE_URL",
+            "description": "The location of the appstore repository showing known pipelinable applications",
+            "displayName": "AppStore URL",
+            "required": false,
+            "value": "https://raw.githubusercontent.com/redhat-kontinuity/appstore/master/appstore.json"
         }
     ],
     "objects": [
@@ -140,6 +147,10 @@
                                     {
                                         "name": "KONTINUITY_CATAPULT_GITHUB_APP_CLIENT_SECRET",
                                         "value": "${KONTINUITY_CATAPULT_GITHUB_APP_CLIENT_SECRET}"
+                                    },
+                                    {
+                                        "name": "CATAPULT_APPSTORE_URL",
+                                        "value": "${CATAPULT_APPSTORE_URL}"
                                     }
                                 ],
                                 "resources": {},

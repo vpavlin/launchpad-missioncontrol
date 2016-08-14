@@ -23,12 +23,16 @@ public class HttpEndpoints extends Application
    @Inject
    private GitHubResource gitHubResource;
 
+   @Inject
+   private AppStoreResource appStoreResource;
+
    @Override
    public Set<Object> getSingletons()
    {
       final Set<Object> singletons = new HashSet<>();
       singletons.add(catapultResource);
       singletons.add(gitHubResource);
+      singletons.add(appStoreResource);
       return singletons;
    }
 }

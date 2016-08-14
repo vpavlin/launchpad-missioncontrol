@@ -21,20 +21,20 @@ public class GitHubTestCredentials {
      * @return the GitHub username
      */
     public static String getUsername(){
-        return EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_GITHUB_USERNAME);
+        return EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_GITHUB_USERNAME);
     }
 
     /**
      * @return the GitHub token
      */
     public static String getToken(){
-        return EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_GITHUB_TOKEN);
+        return EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_GITHUB_TOKEN);
     }
 
     /**
      * @return the GitHub password
      */
     public static String getPassword(){
-        return EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_GITHUB_PASSWORD);
+        return EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_GITHUB_PASSWORD);
     }
 }
