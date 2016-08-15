@@ -78,7 +78,7 @@ public final class Fabric8OpenShiftClientServiceImpl implements OpenShiftService
                 withMasterUrl(apiUrl).
                 withUsername("admin"). //TODO externalize or account for this?
                 withPassword("admin"). // TODO externalize or account for this?
-                withTrustCerts(true). //TODO never do this in production as it opens us to man-in-the-middle attacks
+                withTrustCerts(true). //TODO Issue #17 never do this in production as it opens us to man-in-the-middle attacks
                 build();
         final OpenShiftClient client = new DefaultOpenShiftClient(config);
         this.client = client;
