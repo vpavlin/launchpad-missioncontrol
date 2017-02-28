@@ -23,6 +23,7 @@
         <arquillian.runmode>managed</arquillian.runmode>
 
         <!-- other plug-in versions -->
+        <version.org.apache.httpcomponents_httpclient>4.3.5</version.org.apache.httpcomponents_httpclient>
         <version.arquillian_universe>1.0.0.Alpha2</version.arquillian_universe>
         <version.org.arquillian.container_arquillian-container-chameleon>1.0.0.Alpha6</version.org.arquillian.container_arquillian-container-chameleon>
         <version.org.kohsuke_github-api>1.76</version.org.kohsuke_github-api>
@@ -33,6 +34,7 @@
         <version.org.jboss.arquillian.extension_arquillian-phantom-driver>1.2.1.Final</version.org.jboss.arquillian.extension_arquillian-phantom-driver>
         <version.ch.qos.logback_logback-classic>1.0.13</version.ch.qos.logback_logback-classic>
         <version.org.assertj_assertj-core>3.4.1</version.org.assertj_assertj-core>
+        <version.org.jboss.resteasy_resteasy.multipart.provider>3.0.6.Final</version.org.jboss.resteasy_resteasy.multipart.provider>
 
     </properties>
     <modules>
@@ -215,6 +217,17 @@
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
+            <version>${version.org.jboss.resteasy_resteasy.multipart.provider}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${version.org.apache.httpcomponents_httpclient}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

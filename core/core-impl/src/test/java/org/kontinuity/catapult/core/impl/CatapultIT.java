@@ -1,5 +1,6 @@
 package org.kontinuity.catapult.core.impl;
 
+import com.google.common.io.Files;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -52,6 +53,7 @@ public class CatapultIT {
     private static final String PIPELINE_TEMPLATE_PATH = "helloworld/.openshift-ci_cd/pipeline-template.yaml";
 
     private final Collection<String> openshiftProjectsToDelete = new ArrayList<>();
+   private final Collection<String> githubReposToDelete = new ArrayList<>();
     
     private static final String PREFIX_NAME_PROJECT = "test-project-";
 
@@ -89,17 +91,28 @@ public class CatapultIT {
 
 	@Before
 	@After
-	public void reset() {
+	public void cleanupGitHubProjects() {
 		// also, make sure that the GitHub user's account does not already contain the repo to fork
 		// After the test remove the repository we created
 		final String repositoryName = GitHubTestCredentials.getUsername() + "/" + GITHUB_SOURCE_REPO_NAME;
+      final GitHubService gitHubService = gitHubServiceFactory.create(GitHubTestCredentials.getToken());
 		try {
-			final GitHubService gitHubService = gitHubServiceFactory.create(GitHubTestCredentials.getToken());
 			((GitHubServiceSpi) gitHubService).deleteRepository(repositoryName);
 		} catch (NoSuchRepositoryException e) {
 			// ignore
 			log.info("Repository '" + repositoryName + "' does not exist.");
 		}
+      githubReposToDelete.forEach(repoName -> {
+         final String fullRepoName = GitHubTestCredentials.getUsername() + '/' + repoName;
+         try{
+            ((GitHubServiceSpi)gitHubService).deleteRepository(fullRepoName);
+            log.info("Deleted GitHub repository: " + fullRepoName);
+         }catch(final NoSuchRepositoryException nsre){
+            log.severe("Could not remove GitHub repo " + fullRepoName + ": " + nsre.getMessage());
+         }
+
+      });
+      githubReposToDelete.clear();
 	}
     
 	@Before
@@ -108,46 +121,73 @@ public class CatapultIT {
 		openshiftProjectsToDelete.forEach(projectName -> {
 			final boolean deleted = ((OpenShiftServiceSpi) openShiftService).deleteProject(projectName);
 			if (deleted) {
-				log.info("Deleted project: " + projectName);
+				log.info("Deleted OpenShift project: " + projectName);
 			}
 		});
 		openshiftProjectsToDelete.clear();
     }
 
     @Test
-    public void fling() {
+    public void flingFork() {
         // Define the projectile with a custom, unique OpenShift project name.
     	final String expectedName = getUniqueProjectName();
         final Projectile projectile = ProjectileBuilder.newInstance()
                 .gitHubAccessToken(GitHubTestCredentials.getToken())
+                .openShiftProjectName(expectedName)
+                .forkType()
                 .sourceGitHubRepo(GITHUB_SOURCE_REPO_FULLNAME)
                 .gitRef(GIT_REF)
                 .pipelineTemplatePath(PIPELINE_TEMPLATE_PATH)
-                .openShiftProjectName(expectedName)
                 .build();
 
         // Fling
         final Boom boom = catapult.fling(projectile);
 
         // Assertions
-        final GitHubRepository createdRepo = boom.getCreatedRepository();
-        Assert.assertNotNull("repo can not be null", createdRepo);
-        final OpenShiftProject createdProject = boom.getCreatedProject();
-        Assert.assertNotNull("project can not be null", createdProject);
-        final String foundName = createdProject.getName();
-        log.info("Created OpenShift project: " + foundName);
-        openshiftProjectsToDelete.add(foundName);
-        Assert.assertEquals(expectedName, foundName);
-		  // checking that the Build Config was created.
-        assertThat(createdProject.getResources()).isNotNull().hasSize(1);
-        assertTrue(createdProject.getResources().get(0).getKind().equals("BuildConfig"));
-        assertThat(boom.getGitHubWebhook()).isNotNull();
+       assertions(expectedName, boom);
+    }
+
+   @Test
+   public void flingCreate() {
+      // Define the projectile with a custom, unique OpenShift project name.
+      final String expectedName = getUniqueProjectName();
+      File tempDir = Files.createTempDir();
+      final Projectile projectile = ProjectileBuilder.newInstance()
+            .gitHubAccessToken(GitHubTestCredentials.getToken())
+            .openShiftProjectName(expectedName)
+            .createType()
+            .projectLocation(tempDir.getPath())
+            .build();
+
+      // Mark GitHub repo for deletion
+      githubReposToDelete.add(expectedName);
+
+      // Fling
+      final Boom boom = catapult.fling(projectile);
+
+      // Assertions
+      assertions(expectedName, boom);
+   }
+
+   private void assertions(String expectedName, Boom boom) {
         /*
            Can't really assert on any of the properties of the
            new repo because they could change in GitHub and
            break our tests
          */
-    }
+      final GitHubRepository createdRepo = boom.getCreatedRepository();
+      Assert.assertNotNull("repo can not be null", createdRepo);
+      final OpenShiftProject createdProject = boom.getCreatedProject();
+      Assert.assertNotNull("project can not be null", createdProject);
+      final String foundName = createdProject.getName();
+      log.info("Created OpenShift project: " + foundName);
+      openshiftProjectsToDelete.add(foundName);
+      Assert.assertEquals(expectedName, foundName);
+      // checking that the Build Config was created.
+      assertThat(createdProject.getResources()).isNotNull().hasSize(1);
+      assertTrue(createdProject.getResources().get(0).getKind().equals("BuildConfig"));
+      assertThat(boom.getGitHubWebhook()).isNotNull();
+   }
 
     private String getUniqueProjectName() {
         return PREFIX_NAME_PROJECT + System.currentTimeMillis();

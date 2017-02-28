@@ -289,7 +289,7 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
     	}
     	try {
 			final GHRepository repo = delegate.getRepository(repositoryName);
-			log.warning("Deleting repo at " + repo.gitHttpTransportUrl());
+			log.fine("Deleting repo at " + repo.gitHttpTransportUrl());
 			repo.delete();
         } catch (final IOException ioe) {
             // Check for repo not found (this is how Kohsuke Java Client reports the error)
@@ -308,9 +308,14 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
      * @return
      */
     private static boolean isRepoNotFound(final IOException ioe) {
-        assert ioe != null : "ioe is required";
-        return ioe.getClass() == FileNotFoundException.class &&
-                ioe.getMessage().contains(MSG_NOT_FOUND);
+       assert ioe != null : "ioe is required";
+       final boolean notFound = ioe.getClass() == FileNotFoundException.class &&
+               ioe.getMessage().contains(MSG_NOT_FOUND);
+       final Throwable cause = ioe.getCause();
+       if (!notFound && cause != null && cause instanceof IOException) {
+          return isRepoNotFound((IOException) cause);
+       }
+       return notFound;
     }
     
 }
