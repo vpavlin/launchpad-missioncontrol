@@ -7,6 +7,7 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.*;
@@ -20,8 +21,9 @@ import java.util.logging.Logger;
  * Ensures the HTML Console for Catapult is working as expected
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  */
+@RunWith(Arquillian.class)
 //TODO Issue #166 disabled this as stopgap
-//@RunWith(Arquillian.class)
+@Ignore
 public class CatapultConsoleIT extends CatapultITBase {
 
    private static final Logger log = Logger.getLogger(CatapultConsoleIT.class.getName());
