@@ -20,7 +20,8 @@ import java.util.logging.Logger;
  * Ensures the HTML Console for Catapult is working as expected
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  */
-@RunWith(Arquillian.class)
+//TODO Issue #166 disabled this as stopgap
+//@RunWith(Arquillian.class)
 public class CatapultConsoleIT extends CatapultITBase {
 
    private static final Logger log = Logger.getLogger(CatapultConsoleIT.class.getName());
