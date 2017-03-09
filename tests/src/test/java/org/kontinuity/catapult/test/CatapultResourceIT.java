@@ -6,6 +6,7 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  */
 @RunWith(Arquillian.class)
+@Ignore
 public class CatapultResourceIT extends CatapultITBase {
 
    private static final Logger log = Logger.getLogger(CatapultResourceIT.class.getName());
