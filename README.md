@@ -105,7 +105,27 @@ Prerequisites to Run Integration Tests
         ```
         export CATAPULT_OPENSHIFT_TOKEN=<insert token from URL above>
         ```
-         
+
+3. A Keycloak server
+
+    * Make sure your Federated Identity settings are correct
+      * Navigate to http://sso.prod-preview.openshift.io/auth/realms/fabric8/account/identity
+      * Make sure that the Github and Openshift v3 tokens are set, otherwise click the Add button next to them 
+    * You need a valid token. It lasts for ~30min, so make sure to renew after that time expires between your tests 
+      * Open Chrome and go to: http://prod-preview.openshift.io/
+      * Click Sign-in (in the upper right corner), you should be redirected to developers.redhat.com
+      * Add your authentication info and before clicking on the Login button, press Ctrl+Shift+I to open the Inspect window. Go to the Network tab 
+      * Click the Login button and watch the Network window for an URL similar to `http://prod-preview.openshift.io/?token=XXX`. 
+      * Copy the value from the `token` query parameter.
+       
+    * Set up the following environment variables: 
+        ```
+        export CATAPULT_KEYCLOAK_URL=http://sso.prod-preview.openshift.io
+        export CATAPULT_KEYCLOAK_REALM=fabric8       
+        export CATAPULT_KEYCLOAK_TOKEN=<the token from the steps above>
+        ```
+      
+
 
 Build and Run the Unit Tests
 ----------------------------
