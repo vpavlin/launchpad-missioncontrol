@@ -1,32 +1,36 @@
 package org.kontinuity.catapult.service.openshift.impl.fabric8.openshift.client;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
 
 import org.kontinuity.catapult.service.openshift.api.OpenShiftService;
+import org.kontinuity.catapult.service.openshift.api.OpenShiftServiceFactory;
 import org.kontinuity.catapult.service.openshift.api.OpenShiftSettings;
 
 /**
- * CDI producer for the {@link OpenShiftService}.
+ * {@link OpenShiftServiceFactory} implementation
  *
  * @author <a href="mailto:xcoulon@redhat.com">Xavier Coulon</a>
  */
 @ApplicationScoped
-public class OpenShiftServiceProducer {
+public class Fabric8OpenShiftServiceFactory implements OpenShiftServiceFactory {
 
-    private Logger log = Logger.getLogger(OpenShiftServiceProducer.class.getName());
+    private Logger log = Logger.getLogger(Fabric8OpenShiftServiceFactory.class.getName());
 
     /**
-     * Creates a new {@link OpenShiftService} with the specified, required url
+     * Creates a new {@link OpenShiftService} with the specified, required url and oauthToken
      *
+     * @param oauthToken the OAuth token
      * @return the created {@link OpenShiftService}
      * @throws IllegalArgumentException If the {@code openshiftUrl} is not specified
      */
-    @Produces
-    public OpenShiftService create() {
+    @Override
+    public Fabric8OpenShiftServiceImpl create(String oauthToken) {
+        if (oauthToken == null) {
+            throw new IllegalArgumentException("oauthToken is required");
+        }
+
         final String openShiftApiUrl = OpenShiftSettings.getOpenShiftApiUrl();
         final String openshiftConsoleUrl = OpenShiftSettings.getOpenShiftConsoleUrl();
 
@@ -39,10 +43,7 @@ public class OpenShiftServiceProducer {
         }
 
         // Create and return
-        if (log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, "Created backing OpenShift client for " + openShiftApiUrl);
-        }
-        return new Fabric8OpenShiftClientServiceImpl(openShiftApiUrl, openshiftConsoleUrl);
+        log.finest(() -> "Created backing OpenShift client for " + openShiftApiUrl);
+        return new Fabric8OpenShiftServiceImpl(openShiftApiUrl, openshiftConsoleUrl, oauthToken);
     }
-
 }
