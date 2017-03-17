@@ -30,7 +30,7 @@ Prerequisites to Run Integration Tests
 1. A GitHub Account
 
     * Log into GitHub and generate an access token for use here:
-    --  https://help.github.com/articles/creating-an-access-token-for-command-line-use/
+    --  https://github.com/settings/tokens
         * Set scopes
             * `repo`
             * `admin:repo_hook`
