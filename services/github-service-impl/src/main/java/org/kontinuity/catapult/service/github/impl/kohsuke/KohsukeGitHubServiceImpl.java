@@ -1,7 +1,9 @@
 package org.kontinuity.catapult.service.github.impl.kohsuke;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +14,11 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.RemoteAddCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.kohsuke.github.GHEvent;
 import org.kohsuke.github.GHHook;
 import org.kohsuke.github.GHRepository;
@@ -40,12 +47,11 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
      *
      * @param delegate
      */
-    KohsukeGitHubServiceImpl(final GitHub delegate) {
+    KohsukeGitHubServiceImpl(final GitHub delegate, String token) {
         assert delegate != null : "delegate must be specified";
         this.delegate = delegate;
+        this.gitHubToken = token;
     }
-
-    private static final String WEBHOOK_URL = "url";
 
     private static final String WEBHOOK_CONFIG_PROP_INSECURE_SSL_NAME = "insecure_ssl";
 
@@ -54,6 +60,10 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
     private static final Logger log = Logger.getLogger(KohsukeGitHubServiceImpl.class.getName());
 
     private static final String MSG_NOT_FOUND = "Not Found";
+
+    private static final String WEBHOOK_URL = "url";
+
+    private final String gitHubToken;
 
     private final GitHub delegate;
 
@@ -164,6 +174,21 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
                     + newlyCreatedRepo.getGitTransportUrl());
         }
         return wrapped;
+    }
+
+    @Override
+    public void push(GitHubRepository gitHubRepository, File path) throws IllegalArgumentException {
+        try (Git repo = Git.init().setDirectory(path).call()) {
+            repo.add().addFilepattern(".").call();
+            repo.commit().setMessage("initial version").call();
+            RemoteAddCommand add = repo.remoteAdd();
+            add.setName("origin");
+            add.setUri(new URIish(gitHubRepository.getGitCloneUri().toURL()));
+            add.call();
+            repo.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitHubToken, "")).call();
+        } catch (GitAPIException | MalformedURLException e) {
+            throw new RuntimeException("An error occurred while creating the git repo", e);
+        }
     }
 
     /**

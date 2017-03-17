@@ -1,12 +1,21 @@
 package org.kontinuity.catapult.service.github.impl.kohsuke;
 
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -116,6 +125,30 @@ abstract class GitHubServiceTestBase {
     }
 
     @Test
+    public void createGitHubRepositoryWithContent() throws Exception {
+        // given
+        final String repositoryName = generateRepositoryName();
+        Path tempDirectory = Files.createTempDirectory("test");
+        Path file = tempDirectory.resolve("README.md");
+        Files.write(file, Collections.singletonList("Read me to know more"), Charset.forName("UTF-8"));
+
+        // when
+        final GitHubRepository targetRepo = getGitHubService().createRepository(repositoryName, MY_GITHUB_REPO_DESCRIPTION);
+        getGitHubService().push(targetRepo , tempDirectory.toFile());
+
+        // then
+        Assert.assertEquals(GitHubTestCredentials.getUsername() + "/" + repositoryName, targetRepo.getFullName());
+        URI readmeUri = UriBuilder.fromUri("https://raw.githubusercontent.com/")
+                .path(GitHubTestCredentials.getUsername())
+                .path(repositoryName)
+                .path("/master/README.md").build();
+        HttpURLConnection connection = (HttpURLConnection) readmeUri.toURL().openConnection();
+        Assert.assertEquals("README.md should have been pushed to the repo", 200, connection.getResponseCode());
+
+        FileUtils.forceDelete(tempDirectory.toFile());
+    }
+
+    @Test
     public void createGithubWebHook() throws Exception {
         // given
         final String repositoryName = generateRepositoryName();
@@ -168,7 +201,7 @@ abstract class GitHubServiceTestBase {
     abstract GitHubService getGitHubService();
 
     private String generateRepositoryName() {
-        final String repoName = this.MY_GITHUB_SOURCE_REPO_PREFIX + UUID.randomUUID().toString();
+        final String repoName = MY_GITHUB_SOURCE_REPO_PREFIX + UUID.randomUUID().toString();
         this.repositoryNames.add(repoName);
         return repoName;
     }
