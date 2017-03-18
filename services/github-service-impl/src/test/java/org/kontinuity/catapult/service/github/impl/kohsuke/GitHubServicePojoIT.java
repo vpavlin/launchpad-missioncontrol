@@ -14,9 +14,7 @@ public final class GitHubServicePojoIT extends GitHubServiceTestBase {
 
     @Override
     GitHubService getGitHubService() {
-        return new GitHubServiceFactoryImpl().create(
-                GitHubTestCredentials.getToken(),
-                GitHubTestCredentials.getUsername());
+        return new GitHubServiceFactoryImpl().create(GitHubTestCredentials.getToken());
     }
 
 }

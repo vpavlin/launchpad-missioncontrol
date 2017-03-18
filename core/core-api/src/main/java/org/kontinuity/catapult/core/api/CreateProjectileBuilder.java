@@ -2,21 +2,24 @@ package org.kontinuity.catapult.core.api;
 
 import java.io.File;
 
+import org.kontinuity.catapult.base.identity.Identity;
+
 /**
  * DSL builder for creating {@link CreateProjectile} objects.  Responsible for
  * validating state before calling upon the {@link CreateProjectileBuilder#build()}
  * operation.  The following properties are required:
  * <p>
  * <ul>
- * <li>gitHubAccessToken</li>
+ * <li>gitHubIdentity</li>
+ * <li>openShiftIdentity</li>
  * <li>projectLocation</li>
  * </ul>
  * <p>
  * Each property's valid value and purpose is documented in its setter method.
  */
 public class CreateProjectileBuilder extends ProjectileBuilder {
-    CreateProjectileBuilder(String gitHubAccessToken, String openshiftAccessToken, String openShiftProjectName) {
-        super(gitHubAccessToken, openshiftAccessToken, openShiftProjectName);
+    CreateProjectileBuilder(Identity gitHubIdentity, Identity openShiftIdentity, String openShiftProjectName) {
+        super(gitHubIdentity, openShiftIdentity, openShiftProjectName);
     }
 
     private String projectLocation;
