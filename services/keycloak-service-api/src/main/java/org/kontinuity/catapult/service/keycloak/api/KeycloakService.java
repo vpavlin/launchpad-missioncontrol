@@ -12,7 +12,7 @@ public interface KeycloakService {
      * @param token the keycloak access token
      * @return the openshift v3 token assigned to the given keycloak access token
      */
-    String getOpenshiftV3Token(String token);
+    String getOpenShiftToken(String token);
 
     /**
      * Returns the Github token

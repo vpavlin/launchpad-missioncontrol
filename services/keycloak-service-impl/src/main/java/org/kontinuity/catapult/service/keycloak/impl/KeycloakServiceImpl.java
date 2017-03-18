@@ -25,7 +25,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     private final String gitHubURL;
 
-    private final String openshiftURL;
+    private final String openShiftURL;
 
     private final OkHttpClient httpClient;
 
@@ -37,7 +37,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     public KeycloakServiceImpl(String keyCloakURL, String realm) {
         this.gitHubURL = buildURL(keyCloakURL, realm, "github");
-        this.openshiftURL = buildURL(keyCloakURL, realm, "openshift-v3");
+        this.openShiftURL = buildURL(keyCloakURL, realm, "openshift-v3");
 
         httpClient = new OkHttpClient();
     }
@@ -50,8 +50,8 @@ public class KeycloakServiceImpl implements KeycloakService {
      * @return
      */
     @Override
-    public String getOpenshiftV3Token(String keycloakAccessToken) {
-        return getToken(openshiftURL, keycloakAccessToken);
+    public String getOpenShiftToken(String keycloakAccessToken) {
+        return getToken(openShiftURL, keycloakAccessToken);
     }
 
     /**

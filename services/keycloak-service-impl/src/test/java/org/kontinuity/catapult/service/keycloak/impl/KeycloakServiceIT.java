@@ -1,7 +1,6 @@
 package org.kontinuity.catapult.service.keycloak.impl;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -18,7 +17,7 @@ public class KeycloakServiceIT {
     public void testInvalidTokenOpenshift() {
         String token = "token";
         KeycloakServiceImpl service = new KeycloakServiceImpl();
-        Assert.assertNotNull(service.getOpenshiftV3Token(token));
+        Assert.assertNotNull(service.getOpenShiftToken(token));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -39,7 +38,7 @@ public class KeycloakServiceIT {
     public void testValidTokenOpenshift() {
         String token = KeycloakTestCredentials.getToken();
         KeycloakServiceImpl service = new KeycloakServiceImpl();
-        Assert.assertNotNull(service.getOpenshiftV3Token(token));
+        Assert.assertNotNull(service.getOpenShiftToken(token));
     }
 
 }
