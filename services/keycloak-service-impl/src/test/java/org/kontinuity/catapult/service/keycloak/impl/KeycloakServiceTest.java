@@ -23,33 +23,4 @@ public class KeycloakServiceTest {
         service.getOpenShiftToken("token");
         Assert.fail("Should have thrown IllegalStateException");
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testInvalidTokenOpenshift() {
-        String token = "token";
-        KeycloakServiceImpl service = new KeycloakServiceImpl();
-        Assert.assertNotNull(service.getOpenShiftToken(token));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testInvalidTokenGithub() {
-        String token = "InvalidToken";
-        KeycloakServiceImpl service = new KeycloakServiceImpl();
-        Assert.assertNotNull(service.getGithubToken(token));
-    }
-
-    @Test
-    public void testValidTokenGithub() {
-        String token = KeycloakTestCredentials.getToken();
-        KeycloakServiceImpl service = new KeycloakServiceImpl();
-        Assert.assertNotNull(service.getGithubToken(token));
-    }
-
-    @Test
-    public void testValidTokenOpenshift() {
-        String token = KeycloakTestCredentials.getToken();
-        KeycloakServiceImpl service = new KeycloakServiceImpl();
-        Assert.assertNotNull(service.getOpenShiftToken(token));
-    }
-
 }
