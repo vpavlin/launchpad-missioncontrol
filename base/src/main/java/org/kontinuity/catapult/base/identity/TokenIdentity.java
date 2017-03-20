@@ -21,4 +21,19 @@ public class TokenIdentity implements Identity {
     public void accept(IdentityVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TokenIdentity that = (TokenIdentity) o;
+
+        return token.equals(that.token);
+    }
+
+    @Override
+    public int hashCode() {
+        return token.hashCode();
+    }
 }

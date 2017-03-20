@@ -29,4 +29,21 @@ public class UserPasswordIdentity implements Identity {
         visitor.visit(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserPasswordIdentity that = (UserPasswordIdentity) o;
+
+        if (!username.equals(that.username)) return false;
+        return password != null ? password.equals(that.password) : that.password == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = username.hashCode();
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        return result;
+    }
 }
