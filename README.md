@@ -190,3 +190,4 @@ Contributing
 git config commit.template .github/gitcommit.txt --local
 git config commit.gpgsign true --local
 ```
+

@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 
@@ -14,6 +15,8 @@ import org.kontinuity.catapult.core.api.Catapult;
 import org.kontinuity.catapult.core.api.CreateProjectile;
 import org.kontinuity.catapult.core.api.ForkProjectile;
 import org.kontinuity.catapult.core.api.Projectile;
+import org.kontinuity.catapult.core.api.StatusMessage;
+import org.kontinuity.catapult.core.api.StatusMessageEvent;
 import org.kontinuity.catapult.service.github.api.DuplicateWebhookException;
 import org.kontinuity.catapult.service.github.api.GitHubRepository;
 import org.kontinuity.catapult.service.github.api.GitHubService;
@@ -24,6 +27,8 @@ import org.kontinuity.catapult.service.github.spi.GitHubServiceSpi;
 import org.kontinuity.catapult.service.openshift.api.OpenShiftProject;
 import org.kontinuity.catapult.service.openshift.api.OpenShiftService;
 import org.kontinuity.catapult.service.openshift.api.OpenShiftServiceFactory;
+
+import static java.util.Collections.singletonMap;
 
 /**
  * Implementation of the {@link Catapult} interface.
@@ -39,6 +44,9 @@ public class CatapultImpl implements Catapult {
 
     @Inject
     private GitHubServiceFactory gitHubServiceFactory;
+
+    @Inject
+    Event<StatusMessageEvent> event;
 
     /**
      * {@inheritDoc}
@@ -58,25 +66,24 @@ public class CatapultImpl implements Catapult {
         final String projectName = projectile.getOpenShiftProjectName();
 
         /*
-          TODO Figure how to best handle posilbe DuplicateProjectException, but has to be handled to the user at some intelligent level
+          TODO Figure how to best handle possible DuplicateProjectException, but has to be handled to the user at some intelligent level
          */
         OpenShiftService openShiftService = openShiftServiceFactory.create(projectile.getOpenShiftIdentity());
         final OpenShiftProject createdProject = openShiftService.createProject(projectName);
 
-        ForkProjectile forkProjectile = projectile;
         /*
          * Construct the full URI for the pipeline template file,
          * relative to the repository root
          */
         final URI pipelineTemplateUri = UriBuilder.fromUri("https://raw.githubusercontent.com/")
-                .path(forkProjectile.getSourceGitHubRepo())
-                .path(forkProjectile.getGitRef())
-                .path(forkProjectile.getPipelineTemplatePath()).build();
+                .path(projectile.getSourceGitHubRepo())
+                .path(projectile.getGitRef())
+                .path(projectile.getPipelineTemplatePath()).build();
 
         // Configure the OpenShift project
         openShiftService.configureProject(createdProject,
                                           gitHubRepository.getGitCloneUri(),
-                                          forkProjectile.getGitRef(),
+                                          projectile.getGitRef(),
                                           pipelineTemplateUri);
 
         GitHubWebhook webhook = getGitHubWebhook(gitHubService, openShiftService, gitHubRepository, createdProject);
@@ -90,16 +97,24 @@ public class CatapultImpl implements Catapult {
         final GitHubService gitHubService = getGitHubService(projectile);
         String projectName = projectile.getOpenShiftProjectName();
         File path = projectile.getProjectLocation().toFile();
-        String repositoryDescription = projectile.getGitHubRepositoryDescription();
-        GitHubRepository gitHubRepository = gitHubService.createRepository(projectName, repositoryDescription);
+        String gitHubRepositoryDescription = projectile.getGitHubRepositoryDescription();
+        GitHubRepository gitHubRepository = gitHubService.createRepository(projectName, gitHubRepositoryDescription);
+        event.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.GITHUB_CREATE, singletonMap("location", gitHubRepository.getHomepage())));
         gitHubService.push(gitHubRepository, path);
+        fireEvent(projectile, StatusMessage.GITHUB_PUSHED);
 
         OpenShiftService openShiftService = openShiftServiceFactory.create(projectile.getOpenShiftIdentity());
         OpenShiftProject createdProject = openShiftService.createProject(projectName);
+        event.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.OPENSHIFT_CREATE, singletonMap("location", createdProject.getConsoleOverviewUrl())));
         openShiftService.configureProject(createdProject, gitHubRepository.getGitCloneUri());
 
         GitHubWebhook webhook = getGitHubWebhook(gitHubService, openShiftService, gitHubRepository, createdProject);
+        fireEvent(projectile, StatusMessage.GITHUB_WEBHOOK);
         return new BoomImpl(gitHubRepository, createdProject, webhook);
+    }
+
+    private void fireEvent(Projectile projectile, StatusMessage status) {
+        event.fire(new StatusMessageEvent(projectile.getId(), status));
     }
 
 
