@@ -98,7 +98,14 @@ Prerequisites to Run Integration Tests
         ```
 
 3. A Keycloak server
+
+    * Make sure your Federated Identity settings are correct
+      * Open Chrome and go to: http://prod-preview.openshift.io/
+      * Click Sign-in (in the upper right corner), you should be redirected to developers.redhat.com
+      * Navigate to http://sso.prod-preview.openshift.io/auth/realms/fabric8/account/identity
+      * Make sure that the Github and Openshift v3 tokens are set
       
+       
     * Set up the following environment variables: 
       ```
         export CATAPULT_KEYCLOAK_URL=http://sso.prod-preview.openshift.io
