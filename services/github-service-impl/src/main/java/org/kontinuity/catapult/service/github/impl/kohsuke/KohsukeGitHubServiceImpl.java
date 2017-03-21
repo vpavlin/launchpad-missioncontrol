@@ -251,8 +251,9 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
         } catch (final IOException ioe) {
             if (ioe instanceof FileNotFoundException) {
                 final FileNotFoundException fnfe = (FileNotFoundException) ioe;
-                fnfe.getMessage().contains("Hook already exists on this repository");
-                throw DuplicateWebhookException.create(webhookUrl);
+                if (fnfe.getMessage().contains("Hook already exists on this repository")) {
+                    throw DuplicateWebhookException.create(webhookUrl);
+                }
             }
             throw new RuntimeException(ioe);
         }
