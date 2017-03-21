@@ -3,7 +3,7 @@ package org.kontinuity.catapult.service.keycloak.impl;
 import java.io.IOException;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import javax.enterprise.inject.Vetoed;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +27,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String TOKEN_URL_TEMPLATE = "%s/auth/realms/%s/broker/%s/token";
 
     public static final String CATAPULT_KEYCLOAK_URL = "CATAPULT_KEYCLOAK_URL";
+
     public static final String CATAPULT_KEYCLOAK_REALM = "CATAPULT_KEYCLOAK_REALM";
 
     private final String gitHubURL;
@@ -35,7 +36,6 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     private final OkHttpClient httpClient;
 
-    @Inject
     public KeycloakServiceImpl() {
         this(EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_KEYCLOAK_URL),
              EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_KEYCLOAK_REALM));

@@ -27,7 +27,9 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.kontinuity.catapult.base.EnvironmentSupport;
 import org.kontinuity.catapult.base.identity.Identity;
+import org.kontinuity.catapult.base.identity.IdentityFactory;
 import org.kontinuity.catapult.core.api.Boom;
 import org.kontinuity.catapult.core.api.Catapult;
 import org.kontinuity.catapult.core.api.CreateProjectile;
@@ -83,9 +85,16 @@ public class CatapultResource {
             @NotNull @QueryParam(QUERY_PARAM_PIPELINE_TEMPLATE_PATH) final String pipelineTemplatePath,
             @NotNull @HeaderParam(HttpHeaders.AUTHORIZATION) final String authorization) {
 
-        String keycloakToken = keycloakService.extractKeycloakTokenFromHeader(authorization);
-        Identity githubIdentity = keycloakService.getGithubIdentity(keycloakToken);
-        Identity openShiftIdentity = keycloakService.getOpenShiftIdentity(keycloakToken);
+        Identity githubIdentity;
+        Identity openShiftIdentity;
+        if (useDefaultIdentities()) {
+            githubIdentity = getDefaultGithubIdentity();
+            openShiftIdentity = getDefaultOpenShiftIdentity();
+        } else {
+            String keycloakToken = keycloakService.extractKeycloakTokenFromHeader(authorization);
+            githubIdentity = keycloakService.getGithubIdentity(keycloakToken);
+            openShiftIdentity = keycloakService.getOpenShiftIdentity(keycloakToken);
+        }
 
         ForkProjectile projectile = ProjectileBuilder.newInstance()
                 .gitHubIdentity(githubIdentity)
@@ -109,10 +118,16 @@ public class CatapultResource {
             @NotNull @HeaderParam(HttpHeaders.AUTHORIZATION) final String authorization,
             MultipartFormDataInput uploaded) {
 
-        String keycloakToken = keycloakService.extractKeycloakTokenFromHeader(authorization);
-        Identity githubIdentity = keycloakService.getGithubIdentity(keycloakToken);
-        Identity openShiftIdentity = keycloakService.getOpenShiftIdentity(keycloakToken);
-
+        Identity githubIdentity;
+        Identity openShiftIdentity;
+        if (useDefaultIdentities()) {
+            githubIdentity = getDefaultGithubIdentity();
+            openShiftIdentity = getDefaultOpenShiftIdentity();
+        } else {
+            String keycloakToken = keycloakService.extractKeycloakTokenFromHeader(authorization);
+            githubIdentity = keycloakService.getGithubIdentity(keycloakToken);
+            openShiftIdentity = keycloakService.getOpenShiftIdentity(keycloakToken);
+        }
         InputPart inputPart = uploaded.getFormDataMap().get("file").get(0);
         java.nio.file.Path tempDir = null;
         try {
@@ -156,4 +171,25 @@ public class CatapultResource {
         }
         return Response.temporaryRedirect(consoleOverviewUri).build();
     }
+
+
+    private Identity getDefaultOpenShiftIdentity() {
+        // Read from the ENV variables
+        String user = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_OPENSHIFT_USERNAME");
+        String password = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_OPENSHIFT_PASSWORD");
+        return IdentityFactory.createFromUserPassword(user, password);
+    }
+
+    private Identity getDefaultGithubIdentity() {
+        // Try using the provided Github token
+        String val = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("GITHUB_TOKEN");
+        return IdentityFactory.createFromToken(val);
+    }
+
+    private boolean useDefaultIdentities() {
+        String user = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_USERNAME");
+        String password = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_PASSWORD");
+        return (user != null && password != null);
+    }
+
 }
