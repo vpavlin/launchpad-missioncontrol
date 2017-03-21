@@ -24,18 +24,4 @@ public interface KeycloakService {
      * @return the github Identity token assigned to the given keycloak access token
      */
     Identity getGithubIdentity(String token);
-
-    /**
-     * Returns the keycloak token from the header.
-     * Basically it removes the `Bearer: ' prefix
-     * @param value
-     * @return
-     */
-    default  String extractKeycloakTokenFromHeader(String value) {
-        if (!value.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Bearer token not found");
-        }
-        return value.substring(7);
-    }
-
 }

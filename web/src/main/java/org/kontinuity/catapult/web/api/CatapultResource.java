@@ -91,9 +91,8 @@ public class CatapultResource {
             githubIdentity = getDefaultGithubIdentity();
             openShiftIdentity = getDefaultOpenShiftIdentity();
         } else {
-            String keycloakToken = keycloakService.extractKeycloakTokenFromHeader(authorization);
-            githubIdentity = keycloakService.getGithubIdentity(keycloakToken);
-            openShiftIdentity = keycloakService.getOpenShiftIdentity(keycloakToken);
+            githubIdentity = keycloakService.getGithubIdentity(authorization);
+            openShiftIdentity = keycloakService.getOpenShiftIdentity(authorization);
         }
 
         ForkProjectile projectile = ProjectileBuilder.newInstance()
@@ -124,9 +123,8 @@ public class CatapultResource {
             githubIdentity = getDefaultGithubIdentity();
             openShiftIdentity = getDefaultOpenShiftIdentity();
         } else {
-            String keycloakToken = keycloakService.extractKeycloakTokenFromHeader(authorization);
-            githubIdentity = keycloakService.getGithubIdentity(keycloakToken);
-            openShiftIdentity = keycloakService.getOpenShiftIdentity(keycloakToken);
+            githubIdentity = keycloakService.getGithubIdentity(authorization);
+            openShiftIdentity = keycloakService.getOpenShiftIdentity(authorization);
         }
         InputPart inputPart = uploaded.getFormDataMap().get("file").get(0);
         java.nio.file.Path tempDir = null;

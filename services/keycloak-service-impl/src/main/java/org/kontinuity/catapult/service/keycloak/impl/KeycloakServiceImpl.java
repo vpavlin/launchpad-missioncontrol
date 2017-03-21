@@ -83,7 +83,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private String getToken(String url, String token) {
         Request request = new Request.Builder()
                 .url(url)
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", token)
                 .build();
         Call call = httpClient.newCall(request);
         try {
