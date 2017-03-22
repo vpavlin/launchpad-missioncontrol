@@ -172,6 +172,34 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
             throw new RuntimeException("Could not create GitHub repository named '" + repositoryName + "'", e);
         }
 
+        // Block until exists
+        int counter = 0;
+        while (true) {
+            counter++;
+            final String repositoryFullName;
+            try {
+                repositoryFullName = delegate.getMyself().getLogin() + '/' + repositoryName;
+            } catch (final IOException ioe) {
+                throw new RuntimeException(ioe);
+            }
+            if (this.repositoryExists(repositoryFullName)) {
+                // We good
+                break;
+            }
+            if (counter == 10) {
+                throw new IllegalStateException("Newly-created repository "
+                        + repositoryFullName + " could not be found ");
+            }
+            log.finest("Couldn't find repository " + repositoryFullName +
+                    " after creating; waiting and trying again...");
+            try {
+                Thread.sleep(3000);
+            } catch (final InterruptedException ie) {
+                Thread.interrupted();
+                throw new RuntimeException("Someone interrupted thread while finding newly-created repo", ie);
+            }
+        }
+
         // Wrap in our API view and return
         final GitHubRepository wrapped = new KohsukeGitHubRepositoryImpl(newlyCreatedRepo);
         if (log.isLoggable(Level.FINEST)) {
