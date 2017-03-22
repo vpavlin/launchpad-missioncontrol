@@ -66,8 +66,6 @@ public class CatapultResource {
 
     private static final String QUERY_PARAM_PIPELINE_TEMPLATE_PATH = "pipelineTemplatePath";
 
-    private static final String QUERY_PARAM_PROJECT_LOCATION = "projectLocation";
-
     private static Logger log = Logger.getLogger(CatapultResource.class.getName());
 
     @Inject
