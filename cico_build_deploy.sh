@@ -10,7 +10,7 @@ BUILDER_IMAGE="catapult-builder"
 BUILDER_CONT="catapult-builder-container"
 DEPLOY_IMAGE="catapult-deploy"
 
-TARGET_DIR="target"
+TARGET_DIR="web/target"
 
 # Show command before executing
 set -x
