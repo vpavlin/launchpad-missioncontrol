@@ -138,6 +138,16 @@ Run the Integration Tests, Optionally Building
     * Start up the WildFly server by going to `$INSTALL_DIR/bin` and executing `standalone.sh` (*nix) or `standalone.bat` (Windows)
     * Run the integration tests and have Maven skip start/stop of the WildFly server by using the `server-remote` profile.  This may speed up your development cycle if you're doing many runs by starting your server on your own and letting it run through several test runs.
         * `$ mvn integration-test -Pit,server-remote` or `$ mvn clean install -Pit,server-remote`
+
+Testing manually
+----------------------------
+* If you have Catapult runing , you may upload a ZIP file containing a valid project (you can download one from the Uber generator) by using the following command: 
+```
+  curl -F "file=@demo.zip" -H "Authorization: Unused"  http://localhost:8080/api/catapult/upload
+```
+
+IMPORTANT: The `Authorization` header is needed, but it won't be used if you provided the `CATAPULT_OPENSHIFT_USERNAME` and `CATAPULT_OPENSHIFT_PASSWORD` env vars. 
+Therefore run the command as-is.
         
 CI Environment
 ----------------------------
