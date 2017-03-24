@@ -109,6 +109,9 @@ export CATAPULT_KEYCLOAK_URL=http://sso.prod-preview.openshift.io
 export CATAPULT_KEYCLOAK_REALM=fabric8
 export CATAPULT_OPENSHIFT_USERNAME=developer
 export CATAPULT_OPENSHIFT_PASSWORD=developer
+unset CATAPULT_OPENSHIFT_TOKEN
+# CATAPULT_OPENSHIFT_TOKEN, if set, will override username/password authentication scheme
+#export CATAPULT_OPENSHIFT_TOKEN=<token here>
 
 ```
     
