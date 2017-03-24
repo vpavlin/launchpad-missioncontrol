@@ -171,21 +171,28 @@ public class CatapultResource {
 
     private Identity getDefaultOpenShiftIdentity() {
         // Read from the ENV variables
-        String user = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_OPENSHIFT_USERNAME");
-        String password = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_OPENSHIFT_PASSWORD");
-        return IdentityFactory.createFromUserPassword(user, password);
+        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_TOKEN");
+        if (token != null) {
+            return IdentityFactory.createFromToken(token);
+        } else {
+            String user = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_OPENSHIFT_USERNAME");
+            String password = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_OPENSHIFT_PASSWORD");
+            return IdentityFactory.createFromUserPassword(user, password);
+        }
     }
 
     private Identity getDefaultGithubIdentity() {
         // Try using the provided Github token
-        String val = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_GITHUB_TOKEN");
-        return IdentityFactory.createFromToken(val);
+        String token = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_GITHUB_TOKEN");
+        return IdentityFactory.createFromToken(token);
     }
 
     private boolean useDefaultIdentities() {
         String user = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_USERNAME");
         String password = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_PASSWORD");
-        return (user != null && password != null);
+        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_TOKEN");
+
+        return ((user != null && password != null) || token != null);
     }
 
 }
