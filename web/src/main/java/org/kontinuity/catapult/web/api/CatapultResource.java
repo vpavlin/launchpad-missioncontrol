@@ -66,6 +66,14 @@ public class CatapultResource {
 
     private static final String QUERY_PARAM_PIPELINE_TEMPLATE_PATH = "pipelineTemplatePath";
 
+    private static final String CATAPULT_OPENSHIFT_USERNAME = "CATAPULT_OPENSHIFT_USERNAME";
+
+    private static final String CATAPULT_OPENSHIFT_PASSWORD = "CATAPULT_OPENSHIFT_PASSWORD";
+
+    private static final String CATAPULT_OPENSHIFT_TOKEN = "CATAPULT_OPENSHIFT_TOKEN";
+
+    private static final String CATAPULT_GITHUB_TOKEN = "CATAPULT_GITHUB_TOKEN";
+
     private static Logger log = Logger.getLogger(CatapultResource.class.getName());
 
     @Inject
@@ -89,7 +97,7 @@ public class CatapultResource {
             githubIdentity = getDefaultGithubIdentity();
             openShiftIdentity = getDefaultOpenShiftIdentity();
         } else {
-            githubIdentity = keycloakService.getGithubIdentity(authorization);
+            githubIdentity = keycloakService.getGitHubIdentity(authorization);
             openShiftIdentity = keycloakService.getOpenShiftIdentity(authorization);
         }
 
@@ -111,9 +119,8 @@ public class CatapultResource {
     @Path(PATH_UPLOAD)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response upload(
-            @Context final HttpServletRequest request,
-            @NotNull @HeaderParam(HttpHeaders.AUTHORIZATION) final String authorization,
-            MultipartFormDataInput uploaded) {
+            @HeaderParam(HttpHeaders.AUTHORIZATION) final String authorization,
+            MultipartFormDataInput form) {
 
         Identity githubIdentity;
         Identity openShiftIdentity;
@@ -121,7 +128,7 @@ public class CatapultResource {
             githubIdentity = getDefaultGithubIdentity();
             openShiftIdentity = getDefaultOpenShiftIdentity();
         } else {
-            githubIdentity = keycloakService.getGithubIdentity(authorization);
+            githubIdentity = keycloakService.getGitHubIdentity(authorization);
             openShiftIdentity = keycloakService.getOpenShiftIdentity(authorization);
         }
         InputPart inputPart = uploaded.getFormDataMap().get("file").get(0);
@@ -163,7 +170,7 @@ public class CatapultResource {
                 log.finest("Redirect issued to: " + consoleOverviewUri.toString());
             }
         } catch (final URISyntaxException urise) {
-            throw new WebApplicationException("couldn't get console location do you have the environment variable set", urise);
+            throw new WebApplicationException("couldn't get console location do you have the environment variable set?", urise);
         }
         return Response.temporaryRedirect(consoleOverviewUri).build();
     }
@@ -171,26 +178,26 @@ public class CatapultResource {
 
     private Identity getDefaultOpenShiftIdentity() {
         // Read from the ENV variables
-        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_TOKEN");
+        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(CATAPULT_OPENSHIFT_TOKEN);
         if (token != null) {
             return IdentityFactory.createFromToken(token);
         } else {
-            String user = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_OPENSHIFT_USERNAME");
-            String password = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_OPENSHIFT_PASSWORD");
+            String user = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_OPENSHIFT_USERNAME);
+            String password = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_OPENSHIFT_PASSWORD);
             return IdentityFactory.createFromUserPassword(user, password);
         }
     }
 
     private Identity getDefaultGithubIdentity() {
         // Try using the provided Github token
-        String token = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_GITHUB_TOKEN");
+        String token = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_GITHUB_TOKEN);
         return IdentityFactory.createFromToken(token);
     }
 
     private boolean useDefaultIdentities() {
-        String user = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_USERNAME");
-        String password = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_PASSWORD");
-        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp("CATAPULT_OPENSHIFT_TOKEN");
+        String user = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(CATAPULT_OPENSHIFT_USERNAME);
+        String password = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(CATAPULT_OPENSHIFT_PASSWORD);
+        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(CATAPULT_OPENSHIFT_TOKEN);
 
         return ((user != null && password != null) || token != null);
     }

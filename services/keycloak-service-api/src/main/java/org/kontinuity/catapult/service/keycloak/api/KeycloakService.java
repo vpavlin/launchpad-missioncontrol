@@ -18,10 +18,10 @@ public interface KeycloakService {
     Identity getOpenShiftIdentity(String token);
 
     /**
-     * Returns the Github {@link Identity} used for authentication with Github
+     * Returns the GitHub {@link Identity} used for authentication with Github
      *
      * @param token the keycloak access token
      * @return the github Identity token assigned to the given keycloak access token
      */
-    Identity getGithubIdentity(String token);
+    Identity getGitHubIdentity(String token);
 }

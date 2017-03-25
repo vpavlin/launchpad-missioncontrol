@@ -3,7 +3,6 @@ package org.kontinuity.catapult.service.keycloak.impl;
 import java.io.IOException;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Vetoed;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,7 +67,7 @@ public class KeycloakServiceImpl implements KeycloakService {
      * @return
      */
     @Override
-    public Identity getGithubIdentity(String keycloakAccessToken) throws IllegalArgumentException {
+    public Identity getGitHubIdentity(String keycloakAccessToken) throws IllegalArgumentException {
         return IdentityFactory.createFromToken(getToken(gitHubURL, keycloakAccessToken));
     }
 
@@ -81,6 +80,9 @@ public class KeycloakServiceImpl implements KeycloakService {
      * @return
      */
     private String getToken(String url, String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new IllegalArgumentException("Keycloak access token is null");
+        }
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", token)
