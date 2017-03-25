@@ -120,7 +120,7 @@ public class CatapultResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response upload(
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authorization,
-            MultipartFormDataInput form) {
+            MultipartFormDataInput uploaded) {
 
         Identity githubIdentity;
         Identity openShiftIdentity;
