@@ -1,83 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Red Hat Catapult</title>
+  <meta charset="UTF-8">
+  <title>Red Hat Catapult</title>
 
-    <!-- PatternFly Styles -->
-    <link rel="stylesheet" href="bower_components/patternfly/dist/css/patternfly.min.css">
-    <link rel="stylesheet" href="bower_components/patternfly/dist/css/patternfly-additions.min.css">
+  <!-- PatternFly Styles -->
+  <link rel="stylesheet" href="bower_components/patternfly/dist/css/patternfly.min.css">
+  <link rel="stylesheet" href="bower_components/patternfly/dist/css/patternfly-additions.min.css">
 
-    <!-- jQuery -->
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <!-- jQuery -->
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
 
-    <!-- Bootstrap JS -->
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
-    <!-- Datatables, jQuery Grid Component -->
-    <!-- Note: jquery.dataTables.js must occur in the html source before patternfly*.js.-->
-    <script src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+  <!-- Datatables, jQuery Grid Component -->
+  <!-- Note: jquery.dataTables.js must occur in the html source before patternfly*.js.-->
+  <script src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 
-    <!-- PatternFly Custom Componets -  Sidebar, Popovers and Datatables Customizations -->
-    <!-- Note: jquery.dataTables.js must occur in the html source before patternfly*.js.-->
-    <script src="bower_components/patternfly/dist/js/patternfly.min.js"></script>
-
-    <!-- Dynamic Form Population -->
-    <script language="JavaScript">
-    $(document).ready(function() {
-      var appstoreURL = "/api/appstore/applications";
-      console.log("Obtaining app store metadata from: " + appstoreURL);
-
-      var DATA_ATTR_NAME_GIT_URL = "data-gitUrl";
-      var DATA_ATTR_NAME_GIT_REF = "data-gitRef";
-      var DATA_ATTR_NAME_PIPELINE_TEMPLATE_PATH = "data-pipelineTemplatePath";
-
-      // Populate the available options from the appstore JSON
-      $.getJSON(appstoreURL)
-        .done(function(json){
-          console.log("Got appstore data: "+ json);
-          $.each(json.repositories, function(i,repository){
-            var repositoryName = repository['name'];
-            var displayName = repository['displayName'];
-            var gitRef = repository['gitRef'];
-            var pipelineTemplatePath = repository['pipelineTemplatePath'];
-            $("#flingSourceRepo").append(
-              $("<option>")
-                  .attr("value", repositoryName)
-                  .attr(DATA_ATTR_NAME_GIT_REF, gitRef)
-                  .attr(DATA_ATTR_NAME_PIPELINE_TEMPLATE_PATH, pipelineTemplatePath)
-                  .text(displayName)
-            );
-          })
-        })
-        .fail(function(jqxhr, textStatus, error){
-          console.log("Could not fetch AppStore metadata: " + textStatus);
-        });
-
-        // Change the hidden fields depending upon the selected option
-        $("#flingSourceRepo").change(function () {
-          setHiddenField(this,DATA_ATTR_NAME_GIT_REF,"gitRef");
-          setHiddenField(this,DATA_ATTR_NAME_PIPELINE_TEMPLATE_PATH,"pipelineTemplatePath");
-        });
-
-        /**
-         * Sets the value of the specified attribute on the specified field
-         * to the value of the specified field
-         */
-        function setHiddenField(sourceField,dataAttributeName,targetField){
-          var valueToSet = $(sourceField).find('option:selected').attr(dataAttributeName);
-          $("#"+targetField).val(valueToSet);
-          console.log("Set " + targetField + ": " + valueToSet);
-        }
-      });
-    </script>
+  <!-- PatternFly Custom Componets -  Sidebar, Popovers and Datatables Customizations -->
+  <!-- Note: jquery.dataTables.js must occur in the html source before patternfly*.js.-->
+  <script src="bower_components/patternfly/dist/js/patternfly.min.js"></script>
 </head>
 <body>
 
 <nav class="navbar navbar-default navbar-pf" role="navigation">
   <div class="navbar-header">
     <a class="navbar-brand" href="/">
-      <img src="images/rhd.png" alt="Red Hat Developers" />
+      <img src="images/rhd.png" alt="Red Hat Developers"/>
     </a>
   </div>
   <div class="collapse navbar-collapse navbar-collapse-1">
@@ -94,21 +44,24 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-5 col-md-6 col-lg-7 details">
-      <p><strong>Strap yourself in.  We're going to production: <em>now</em>.</strong></p>
+      <p><strong>Strap yourself in. We're going to production: <em>now</em>.</strong></p>
       <p>
-        Choose a QuickStart Example Application from the list below.  We'll usher you into production by:
+        Choose a QuickStart Example Application from the list below. We'll usher you into production by:
 
+      <ul>
+        <li>Uploading a ZIP containing your file</li>
+        <li>Creating a GitHub repository into your user namespace</li>
         <ul>
-          <li>Forking the GitHub repository into your user namespace</li>
-          <ul>
-            <li>Yes, we'll ask permission first!</li>
-          </ul>
-          <li>Creating an OpenShift project for this application</li>
-          <li>Kicking off a pipeline to automatically build, test, and deploy the example application</li>
+          <li>Yes, we'll ask permission first!</li>
         </ul>
+        <li>Creating an OpenShift project for this application</li>
+        <li>Kicking off a pipeline to automatically build, test, and deploy the example application</li>
+      </ul>
       </p>
       <p>
-        You'll be able to poke around the live QuickStart.  Get the code from your new repo into your favorite IDE and make some changes as you explore your way around.  Subsequent builds will pull from your GitHub fork and go right through the pipeline we've set up for you.
+        You'll be able to poke around the live QuickStart. Get the code from your new repo into your favorite IDE and make some
+        changes as you explore your way around. Subsequent builds will pull from your GitHub fork and go right through the
+        pipeline we've set up for you.
       </p>
       <p>
         Go get 'em.
@@ -116,17 +69,14 @@
     </div><!--/.col-*-->
   </div><!--/.row-->
   <div class="row">
-    <div class="col-sm-7 col-md-6 col-lg-5 login">
-      <form id="flingForm" class="form-horizontal" action="api/catapult/fling" method="get" role="form">
-        <input type="hidden" id="gitRef" name="gitRef" />
-        <input type="hidden" id="pipelineTemplatePath" name="pipelineTemplatePath" />
-        <div class="form-group">
-          <label for="flingSourceRepo" class="col-sm-2 col-md-2 control-label">QuickStart</label>
-          <div class="col-sm-10 col-md-10">
-            <select class="form-control" required="true" id="flingSourceRepo" name="sourceRepo" form="flingForm" tabindex="1">
-                <option value=""></option>
-            </select>
-          </div>
+    <div class="col-sm-5 col-md-6 col-lg-7 details">
+      <form id="flingForm" enctype="multipart/form-data" action="api/catapult/upload" method="post"
+            role="form">
+        <div class="form-group has-success has-feedback">
+          <label for="file">QuickStart ZIP file</label>
+          <input type="file" required="true" id="file" name="file" tabindex="1" form="flingForm"/>
+          <label for="gitHubRepositoryDescription">GitHub Repository Description</label>
+          <input type="text" id="gitHubRepositoryDescription" name="gitHubRepositoryDescription" tabindex="2" form="flingForm"/>
         </div>
         <div class="form-group">
           <div class="col-xs-4 col-sm-4 col-md-4 submit">
@@ -134,7 +84,7 @@
           </div>
         </div>
       </form>
-    </div><!--/.col-*-->
+    </div>
   </div><!--/.row-->
 </div><!--/.container-->
 
