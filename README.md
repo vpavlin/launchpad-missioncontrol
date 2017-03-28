@@ -46,6 +46,12 @@ Prerequisites to Run Integration Tests
         export CATAPULT_GITHUB_USERNAME=<your github username>
         export CATAPULT_GITHUB_TOKEN=<token created from above>
     
+    You can also reuse what's already defined in your `.gitconfig` file:
+    
+        #!/bin/sh
+        export CATAPULT_GITHUB_USERNAME=`git config github.user`
+        export CATAPULT_GITHUB_TOKEN=`git config github.token`
+
     Use `source ~/catapult-env.sh` to make your changes visible; you may check by typing into a terminal:
 
         $ echo $CATAPULT_GITHUB_USERNAME
