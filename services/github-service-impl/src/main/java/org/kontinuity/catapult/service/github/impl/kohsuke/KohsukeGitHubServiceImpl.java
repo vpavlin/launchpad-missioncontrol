@@ -24,6 +24,7 @@ import org.kohsuke.github.GHEvent;
 import org.kohsuke.github.GHHook;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
+import org.kontinuity.catapult.base.EnvironmentSupport;
 import org.kontinuity.catapult.base.identity.Identity;
 import org.kontinuity.catapult.base.identity.IdentityVisitor;
 import org.kontinuity.catapult.base.identity.TokenIdentity;
@@ -188,10 +189,10 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
             }
             if (counter == 10) {
                 throw new IllegalStateException("Newly-created repository "
-                        + repositoryFullName + " could not be found ");
+                                                        + repositoryFullName + " could not be found ");
             }
             log.finest("Couldn't find repository " + repositoryFullName +
-                    " after creating; waiting and trying again...");
+                               " after creating; waiting and trying again...");
             try {
                 Thread.sleep(3000);
             } catch (final InterruptedException ie) {
@@ -211,9 +212,10 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
 
     @Override
     public void push(GitHubRepository gitHubRepository, File path) throws IllegalArgumentException {
+        String author = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_GITHUB_USERNAME");
         try (Git repo = Git.init().setDirectory(path).call()) {
             repo.add().addFilepattern(".").call();
-            repo.commit().setMessage("initial version").call();
+            repo.commit().setMessage("Initial commit").setAuthor(author, author + "@users.noreply.github.com").call();
             RemoteAddCommand add = repo.remoteAdd();
             add.setName("origin");
             add.setUri(new URIish(gitHubRepository.getGitCloneUri().toURL()));
