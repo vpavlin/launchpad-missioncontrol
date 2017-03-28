@@ -50,8 +50,6 @@ public class CatapultResource {
      **/
     static final String PATH_CATAPULT = "/catapult";
 
-    static final String UTF_8 = "UTF-8";
-
     private static final String PATH_FLING = "/fling";
 
     private static final String PATH_UPLOAD = "/upload";
