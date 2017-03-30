@@ -3,7 +3,7 @@ package io.openshift.appdev.missioncontrol.core.api;
 import io.openshift.appdev.missioncontrol.base.identity.Identity;
 
 /**
- * Value object defining the inputs to {@link Catapult#fling(Projectile)};
+ * Value object defining the inputs to {@link MissionControl#fling(Projectile)};
  * immutable and pre-checked for valid state during creation.
  *
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>

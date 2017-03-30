@@ -1,7 +1,7 @@
 package io.openshift.appdev.missioncontrol.core.api;
 
 /**
- * Value object defining the inputs to {@link Catapult#fling(Projectile)};
+ * Value object defining the inputs to {@link MissionControl#fling(Projectile)};
  * immutable and pre-checked for valid state during creation.
  *
  * ForkProjectile adds the values to Projectile that are needed to create a fork

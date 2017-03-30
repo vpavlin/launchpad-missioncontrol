@@ -16,8 +16,8 @@ public class OpenShiftTestCredentials {
         // No instances
     }
 
-    private static final String NAME_ENV_VAR_SYSPROP_OPENSHIFT_USERNAME = "CATAPULT_OPENSHIFT_USERNAME";
-    private static final String NAME_ENV_VAR_SYSPROP_OPENSHIFT_PASSWORD = "CATAPULT_OPENSHIFT_PASSWORD";
+    private static final String NAME_ENV_VAR_SYSPROP_OPENSHIFT_USERNAME = "LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_USERNAME";
+    private static final String NAME_ENV_VAR_SYSPROP_OPENSHIFT_PASSWORD = "LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_PASSWORD";
 
     /**
      * @return the Openshift token

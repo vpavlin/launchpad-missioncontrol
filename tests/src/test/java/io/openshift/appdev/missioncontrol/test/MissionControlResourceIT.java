@@ -13,18 +13,18 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.openshift.appdev.missioncontrol.web.api.CatapultResource;
+import io.openshift.appdev.missioncontrol.web.api.MissionControlResource;
 
 /**
- * Validation of the {@link CatapultResource}
+ * Validation of the {@link MissionControlResource}
  *
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  */
 @RunWith(Arquillian.class)
 @Ignore
-public class CatapultResourceIT extends CatapultITBase {
+public class MissionControlResourceIT extends MissionControlITBase {
 
-    private static final Logger log = Logger.getLogger(CatapultResourceIT.class.getName());
+    private static final Logger log = Logger.getLogger(MissionControlResourceIT.class.getName());
 
     /**
      * Name of the repo on GitHub to fork into our user namespace
@@ -47,7 +47,7 @@ public class CatapultResourceIT extends CatapultITBase {
     }
 
     /**
-     * Ensures that an HTTP GET request to the "fling" endpoint is
+     * Ensures that an HTTP GET request to the "launch" endpoint is
      * working as contracted
      *
      * @throws IOException

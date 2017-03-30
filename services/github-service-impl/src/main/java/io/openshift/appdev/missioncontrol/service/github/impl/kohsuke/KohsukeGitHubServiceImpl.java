@@ -212,7 +212,7 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
 
     @Override
     public void push(GitHubRepository gitHubRepository, File path) throws IllegalArgumentException {
-        String author = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("CATAPULT_GITHUB_USERNAME");
+        String author = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("LAUNCHPAD_MISSIONCONTROL_GITHUB_USERNAME");
         try (Git repo = Git.init().setDirectory(path).call()) {
             repo.add().addFilepattern(".").call();
             repo.commit().setMessage("Initial commit").setAuthor(author, author + "@users.noreply.github.com").call();

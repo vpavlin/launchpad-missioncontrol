@@ -18,7 +18,7 @@ public class HttpEndpoints extends Application {
     public static final String PATH_API = "/api";
 
     @Inject
-    private CatapultResource catapultResource;
+    private MissionControlResource missionControlResource;
 
     @Inject
     private HealthResource healthResource;
@@ -26,7 +26,7 @@ public class HttpEndpoints extends Application {
     @Override
     public Set<Object> getSingletons() {
         final Set<Object> singletons = new HashSet<>();
-        singletons.add(catapultResource);
+        singletons.add(missionControlResource);
         singletons.add(healthResource);
 
         CorsFilter corsFilter = new CorsFilter();

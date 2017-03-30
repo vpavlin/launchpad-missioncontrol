@@ -5,7 +5,7 @@ import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftProject
 import io.openshift.appdev.missioncontrol.service.github.api.GitHubRepository;
 
 /**
- * Value object containing the result of a {@link Catapult#fling(Projectile)}
+ * Value object containing the result of a {@link MissionControl#fling(Projectile)}
  * call.  Implementations should be immutable and therefore thread-safe.
  *
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>

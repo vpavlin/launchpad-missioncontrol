@@ -16,21 +16,21 @@ public class GitHubTestCredentials {
         // No instances
     }
 
-    private static final String NAME_ENV_VAR_SYSPROP_CATAPULT_GITHUB_USERNAME = "CATAPULT_GITHUB_USERNAME";
+    private static final String NAME_ENV_VAR_SYSPROP_LAUNCHPAD_MISSIONCONTROL_GITHUB_USERNAME = "LAUNCHPAD_MISSIONCONTROL_GITHUB_USERNAME";
 
-    private static final String NAME_ENV_VAR_SYSPROP_CATAPULT_GITHUB_TOKEN = "CATAPULT_GITHUB_TOKEN";
+    private static final String NAME_ENV_VAR_SYSPROP_LAUNCHPAD_MISSIONCONTROL_GITHUB_TOKEN = "LAUNCHPAD_MISSIONCONTROL_GITHUB_TOKEN";
 
     /**
      * @return the GitHub username
      */
     public static String getUsername() {
-        return EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_CATAPULT_GITHUB_USERNAME);
+        return EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_LAUNCHPAD_MISSIONCONTROL_GITHUB_USERNAME);
     }
 
     /**
      * @return the GitHub token
      */
     public static Identity getToken() {
-        return IdentityFactory.createFromToken(EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_CATAPULT_GITHUB_TOKEN));
+        return IdentityFactory.createFromToken(EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_LAUNCHPAD_MISSIONCONTROL_GITHUB_TOKEN));
     }
 }

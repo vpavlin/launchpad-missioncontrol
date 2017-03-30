@@ -21,16 +21,16 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 
 /**
- * Ensures the HTML Console for Catapult is working as expected
+ * Ensures the HTML Console for MissionControl is working as expected
  *
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  */
 @RunWith(Arquillian.class)
 //TODO Issue #166 disabled this as stopgap
 @Ignore
-public class CatapultConsoleIT extends CatapultITBase {
+public class MissionControlConsoleIT extends MissionControlITBase {
 
-    private static final Logger log = Logger.getLogger(CatapultConsoleIT.class.getName());
+    private static final Logger log = Logger.getLogger(MissionControlConsoleIT.class.getName());
 
     private static final String SOURCE_REPO = "redhat-kontinuity/jboss-eap-quickstarts";
 
@@ -45,7 +45,7 @@ public class CatapultConsoleIT extends CatapultITBase {
     }
 
     /**
-     * Ensures that a fling operation initiated from the HTML console
+     * Ensures that a launch operation initiated from the HTML console
      * is working as contracted
      *
      * @throws IOException

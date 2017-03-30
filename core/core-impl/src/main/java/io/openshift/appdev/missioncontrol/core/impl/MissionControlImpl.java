@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 
 import io.openshift.appdev.missioncontrol.core.api.Boom;
-import io.openshift.appdev.missioncontrol.core.api.Catapult;
+import io.openshift.appdev.missioncontrol.core.api.MissionControl;
 import io.openshift.appdev.missioncontrol.core.api.ForkProjectile;
 import io.openshift.appdev.missioncontrol.core.api.Projectile;
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftProject;
@@ -26,13 +26,13 @@ import io.openshift.appdev.missioncontrol.service.github.spi.GitHubServiceSpi;
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftService;
 
 /**
- * Implementation of the {@link Catapult} interface.
+ * Implementation of the {@link MissionControl} interface.
  *
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  */
-public class CatapultImpl implements Catapult {
+public class MissionControlImpl implements MissionControl {
 
-    private static final Logger log = Logger.getLogger(CatapultImpl.class.getName());
+    private static final Logger log = Logger.getLogger(MissionControlImpl.class.getName());
 
     @Inject
     private OpenShiftServiceFactory openShiftServiceFactory;
@@ -44,7 +44,7 @@ public class CatapultImpl implements Catapult {
      * {@inheritDoc}
      */
     @Override
-    public Boom fling(final ForkProjectile projectile) throws IllegalArgumentException {
+    public Boom launch(final ForkProjectile projectile) throws IllegalArgumentException {
 
         final GitHubService gitHubService = getGitHubService(projectile);
         GitHubRepository gitHubRepository;
@@ -86,7 +86,7 @@ public class CatapultImpl implements Catapult {
     }
 
     @Override
-    public Boom fling(CreateProjectile projectile) throws IllegalArgumentException {
+    public Boom launch(CreateProjectile projectile) throws IllegalArgumentException {
         final GitHubService gitHubService = getGitHubService(projectile);
         String projectName = projectile.getOpenShiftProjectName();
         File path = projectile.getProjectLocation().toFile();

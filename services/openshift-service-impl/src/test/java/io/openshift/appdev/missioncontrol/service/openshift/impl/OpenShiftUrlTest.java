@@ -18,9 +18,9 @@ import static io.openshift.appdev.missioncontrol.service.openshift.api.OpenShift
  */
 public class OpenShiftUrlTest {
 
-    private static final String ENV_VAR_SYSPROP_NAME_OPENSHIFT_API_URL = "CATAPULT_OPENSHIFT_API_URL";
+    private static final String ENV_VAR_SYSPROP_NAME_OPENSHIFT_API_URL = "LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_API_URL";
 
-    private static final String ENV_VAR_SYSPROP_NAME_OPENSHIFT_CONSOLE_URL = "CATAPULT_OPENSHIFT_CONSOLE_URL";
+    private static final String ENV_VAR_SYSPROP_NAME_OPENSHIFT_CONSOLE_URL = "LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_CONSOLE_URL";
 
     private static final String TEST_OPENSHIFT_URL = "https://katapult-it-test:8443";
 

@@ -1,16 +1,16 @@
 package io.openshift.appdev.missioncontrol.core.api;
 
 /**
- * Core API and entry point to the Kontinuity Catapult.  Defines high-level
+ * Core API and entry point to the MissionControl.  Defines high-level
  * capabilities intended to be called by outside clients; designed to
  * be additionally exposed as a RESTful endpoint.
  *
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  */
-public interface Catapult {
+public interface MissionControl {
 
     /**
-     * The {@link Catapult}, as the name suggests, is a launcher.  Its responsibility
+     * The {@link MissionControl}, as the name suggests, is a launcher.  Its responsibility
      * is to take the following inputs:
      * <ul>
      * <li>A GitHub project</li>
@@ -35,7 +35,7 @@ public interface Catapult {
      * Jenkins Pipeline (https://github.com/jenkinsci/workflow-plugin/blob/master/README.md#introduction)
      * script called a Jenkinsfile.
      *
-     * This project launching process done by the {@link Catapult} is called a {@link Catapult#fling(ForkProjectile)}.
+     * This project launching process done by the {@link MissionControl} is called a {@link MissionControl#launch(ForkProjectile)}.
      * All inputs are encapsulated inside a {@link Projectile}.  The returned result is,
      * quite unsurprisingly, a {@link Boom}, which contains all information relevant to the caller.
      *
@@ -43,11 +43,11 @@ public interface Catapult {
      * @return The result of the operation encapsulated in a {@link Boom}
      * @throws IllegalArgumentException If the {@link Projectile} is not specified
      */
-    Boom fling(final ForkProjectile projectile) throws IllegalArgumentException;
+    Boom launch(final ForkProjectile projectile) throws IllegalArgumentException;
 
 
     /**
-     * The {@link Catapult}, as the name suggests, is a launcher.  Its responsibility
+     * The {@link MissionControl}, as the name suggests, is a launcher.  Its responsibility
      * is to take the following inputs:
      * <ul>
      * <li>A location of the code</li>
@@ -72,7 +72,7 @@ public interface Catapult {
      * Jenkins Pipeline (https://github.com/jenkinsci/workflow-plugin/blob/master/README.md#introduction)
      * script called a Jenkinsfile.
      *
-     * This project launching process done by the {@link Catapult} is called a {@link Catapult#fling(CreateProjectile)}.
+     * This project launching process done by the {@link MissionControl} is called a {@link MissionControl#launch(CreateProjectile)}.
      * All inputs are encapsulated inside a {@link Projectile}.  The returned result is,
      * quite unsurprisingly, a {@link Boom}, which contains all information relevant to the caller.
      *
@@ -80,5 +80,5 @@ public interface Catapult {
      * @return The result of the operation encapsulated in a {@link Boom}
      * @throws IllegalArgumentException If the {@link Projectile} is not specified
      */
-    Boom fling(final CreateProjectile projectile) throws IllegalArgumentException;
+    Boom launch(final CreateProjectile projectile) throws IllegalArgumentException;
 }

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import com.google.common.io.Files;
+import io.openshift.appdev.missioncontrol.core.api.*;
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftProject;
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftServiceFactory;
 import org.assertj.core.api.Assertions;
@@ -22,11 +23,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.openshift.appdev.missioncontrol.core.api.Boom;
-import io.openshift.appdev.missioncontrol.core.api.Catapult;
-import io.openshift.appdev.missioncontrol.core.api.CreateProjectile;
-import io.openshift.appdev.missioncontrol.core.api.ForkProjectile;
-import io.openshift.appdev.missioncontrol.core.api.ProjectileBuilder;
+import io.openshift.appdev.missioncontrol.core.api.MissionControl;
 import io.openshift.appdev.missioncontrol.service.github.api.GitHubRepository;
 import io.openshift.appdev.missioncontrol.service.github.api.GitHubService;
 import io.openshift.appdev.missioncontrol.service.github.api.GitHubServiceFactory;
@@ -41,15 +38,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test cases for the {@link Catapult}
+ * Test cases for the {@link MissionControl}
  *
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  * @author <a href="mailto:xcoulon@redhat.com">Xavier Coulon</a>
  */
 @RunWith(Arquillian.class)
-public class CatapultIT {
+public class MissionControlIT {
 
-    private static final Logger log = Logger.getLogger(CatapultIT.class.getName());
+    private static final Logger log = Logger.getLogger(MissionControlIT.class.getName());
 
     //TODO #135 Remove reliance on tzonicka
     private static final String GITHUB_SOURCE_REPO_NAME = "jboss-eap-quickstarts";
@@ -73,11 +70,11 @@ public class CatapultIT {
     private GitHubServiceFactory gitHubServiceFactory;
 
     @Inject
-    private Catapult catapult;
+    private MissionControl missionControl;
 
     /**
      * @return a ear file containing all the required classes and dependencies
-     * to test the {@link Catapult}
+     * to test the {@link MissionControl}
      */
     @Deployment(testable = true)
     public static WebArchive createDeployment() {
@@ -86,8 +83,8 @@ public class CatapultIT {
                 .importRuntimeAndTestDependencies().resolve().withTransitivity().asFile();
         // Create deploy file
         final WebArchive war = ShrinkWrap.create(WebArchive.class)
-                .addPackage(Catapult.class.getPackage())
-                .addPackage(CatapultImpl.class.getPackage())
+                .addPackage(MissionControl.class.getPackage())
+                .addPackage(MissionControlImpl.class.getPackage())
                 .addPackage(GitHubTestCredentials.class.getPackage())
                 .addAsWebInfResource("META-INF/jboss-deployment-structure.xml", "jboss-deployment-structure.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
@@ -151,7 +148,7 @@ public class CatapultIT {
                 .build();
 
         // Fling
-        final Boom boom = catapult.fling(projectile);
+        final Boom boom = missionControl.launch(projectile);
 
         // Assertions
         assertions(expectedName, boom);
@@ -174,7 +171,7 @@ public class CatapultIT {
         githubReposToDelete.add(expectedName);
 
         // Fling
-        final Boom boom = catapult.fling(projectile);
+        final Boom boom = missionControl.launch(projectile);
 
         // Assertions
         assertions(expectedName, boom);

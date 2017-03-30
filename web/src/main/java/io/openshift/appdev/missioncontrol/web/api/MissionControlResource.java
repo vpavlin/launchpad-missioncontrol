@@ -28,34 +28,31 @@ import javax.ws.rs.core.Response;
 import io.openshift.appdev.missioncontrol.base.EnvironmentSupport;
 import io.openshift.appdev.missioncontrol.base.identity.Identity;
 import io.openshift.appdev.missioncontrol.base.identity.IdentityFactory;
-import io.openshift.appdev.missioncontrol.core.api.Boom;
-import io.openshift.appdev.missioncontrol.core.api.Catapult;
-import io.openshift.appdev.missioncontrol.core.api.ForkProjectile;
-import io.openshift.appdev.missioncontrol.core.api.ProjectileBuilder;
+import io.openshift.appdev.missioncontrol.core.api.*;
+import io.openshift.appdev.missioncontrol.core.api.MissionControl;
 import io.openshift.appdev.missioncontrol.service.keycloak.api.KeycloakService;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import io.openshift.appdev.missioncontrol.core.api.CreateProjectile;
 
 /**
- * Endpoint exposing the {@link Catapult} over HTTP
+ * Endpoint exposing the {@link MissionControl} over HTTP
  *
  * @author <a href="mailto:alr@redhat.com">Andrew Lee Rubinger</a>
  */
-@Path(CatapultResource.PATH_CATAPULT)
+@Path(MissionControlResource.PATH_MISSIONCONTROL)
 @ApplicationScoped
-public class CatapultResource {
+public class MissionControlResource {
 
     /**
      * Paths
      **/
-    static final String PATH_CATAPULT = "/catapult";
+    static final String PATH_MISSIONCONTROL = "/missioncontrol";
 
-    private static final String PATH_FLING = "/fling";
+    private static final String PATH_LAUNCH = "/launch";
 
     private static final String PATH_UPLOAD = "/upload";
 
     /*
-     Catapult Query Parameters
+     MissionControl Query Parameters
      */
     private static final String QUERY_PARAM_SOURCE_REPO = "sourceRepo";
 
@@ -63,24 +60,24 @@ public class CatapultResource {
 
     private static final String QUERY_PARAM_PIPELINE_TEMPLATE_PATH = "pipelineTemplatePath";
 
-    private static final String CATAPULT_OPENSHIFT_USERNAME = "CATAPULT_OPENSHIFT_USERNAME";
+    private static final String LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_USERNAME = "LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_USERNAME";
 
-    private static final String CATAPULT_OPENSHIFT_PASSWORD = "CATAPULT_OPENSHIFT_PASSWORD";
+    private static final String LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_PASSWORD = "LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_PASSWORD";
 
-    private static final String CATAPULT_OPENSHIFT_TOKEN = "CATAPULT_OPENSHIFT_TOKEN";
+    private static final String LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_TOKEN = "LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_TOKEN";
 
-    private static final String CATAPULT_GITHUB_TOKEN = "CATAPULT_GITHUB_TOKEN";
+    private static final String LAUNCHPAD_MISSIONCONTROL_GITHUB_TOKEN = "LAUNCHPAD_MISSIONCONTROL_GITHUB_TOKEN";
 
-    private static Logger log = Logger.getLogger(CatapultResource.class.getName());
+    private static Logger log = Logger.getLogger(MissionControlResource.class.getName());
 
     @Inject
-    private Catapult catapult;
+    private MissionControl missionControl;
 
     @Inject
     private KeycloakService keycloakService;
 
     @GET
-    @Path(PATH_FLING)
+    @Path(PATH_LAUNCH)
     public Response fling(
             @Context final HttpServletRequest request,
             @NotNull @QueryParam(QUERY_PARAM_SOURCE_REPO) final String sourceGitHubRepo,
@@ -108,7 +105,7 @@ public class CatapultResource {
                 .build();
 
         // Fling it
-        Boom boom = catapult.fling(projectile);
+        Boom boom = missionControl.launch(projectile);
         return processBoom(boom);
     }
 
@@ -142,7 +139,7 @@ public class CatapultResource {
                             .gitHubRepositoryDescription(form.getGitHubRepositoryDescription())
                             .projectLocation(project)
                             .build();
-                    Boom boom = catapult.fling(projectile);
+                    Boom boom = missionControl.launch(projectile);
                     return processBoom(boom);
                 }
             }
@@ -175,26 +172,26 @@ public class CatapultResource {
 
     private Identity getDefaultOpenShiftIdentity() {
         // Read from the ENV variables
-        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(CATAPULT_OPENSHIFT_TOKEN);
+        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_TOKEN);
         if (token != null) {
             return IdentityFactory.createFromToken(token);
         } else {
-            String user = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_OPENSHIFT_USERNAME);
-            String password = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_OPENSHIFT_PASSWORD);
+            String user = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_USERNAME);
+            String password = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_PASSWORD);
             return IdentityFactory.createFromUserPassword(user, password);
         }
     }
 
     private Identity getDefaultGithubIdentity() {
         // Try using the provided Github token
-        String token = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_GITHUB_TOKEN);
+        String token = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(LAUNCHPAD_MISSIONCONTROL_GITHUB_TOKEN);
         return IdentityFactory.createFromToken(token);
     }
 
     private boolean useDefaultIdentities() {
-        String user = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(CATAPULT_OPENSHIFT_USERNAME);
-        String password = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(CATAPULT_OPENSHIFT_PASSWORD);
-        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(CATAPULT_OPENSHIFT_TOKEN);
+        String user = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_USERNAME);
+        String password = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_PASSWORD);
+        String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_TOKEN);
 
         return ((user != null && password != null) || token != null);
     }

@@ -3,7 +3,7 @@ package io.openshift.appdev.missioncontrol.core.api;
 import java.nio.file.Path;
 
 /**
- * Value object defining the inputs to {@link Catapult#fling(Projectile)};
+ * Value object defining the inputs to {@link MissionControl#fling(Projectile)};
  * immutable and pre-checked for valid state during creation.
  *
  * This projectile is used to create a project in the users github.

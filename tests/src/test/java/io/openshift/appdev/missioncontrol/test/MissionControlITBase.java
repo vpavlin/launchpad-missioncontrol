@@ -22,18 +22,18 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 /**
- * Base class for building integration tests for the Catapult; deploys both the real
+ * Base class for building integration tests for the MissionControl; deploys both the real
  * WAR as well as a test deployment to do cleanupCreatedProject when done
  */
-abstract class CatapultITBase {
+abstract class MissionControlITBase {
 
     /*
      Contracts (define here; do NOT link back to where these are defined in runtime code;
      if the runtime code changes that's a contract break)
      */
-    protected static final String PATH_FLING = "api/catapult/fling";
+    protected static final String PATH_FLING = "api/catapult/launch";
 
-    private static final Logger log = Logger.getLogger(CatapultITBase.class.getName());
+    private static final Logger log = Logger.getLogger(MissionControlITBase.class.getName());
 
     // We don't let Drone inject this because we manually-specify the version
     WebDriver driver;
@@ -56,7 +56,7 @@ abstract class CatapultITBase {
     }
 
     /**
-     * Ensures that the "source_repo" query param is specified in the "fling"
+     * Ensures that the "source_repo" query param is specified in the "launch"
      * endpoint
      *
      * @throws IOException

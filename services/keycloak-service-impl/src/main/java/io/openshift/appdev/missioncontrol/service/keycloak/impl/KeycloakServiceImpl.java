@@ -25,9 +25,9 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     private static final String TOKEN_URL_TEMPLATE = "%s/auth/realms/%s/broker/%s/token";
 
-    public static final String CATAPULT_KEYCLOAK_URL = "CATAPULT_KEYCLOAK_URL";
+    public static final String LAUNCHPAD_MISSIONCONTROL_KEYCLOAK_URL = "LAUNCHPAD_MISSIONCONTROL_KEYCLOAK_URL";
 
-    public static final String CATAPULT_KEYCLOAK_REALM = "CATAPULT_KEYCLOAK_REALM";
+    public static final String LAUNCHPAD_MISSIONCONTROL_KEYCLOAK_REALM = "LAUNCHPAD_MISSIONCONTROL_KEYCLOAK_REALM";
 
     private final String gitHubURL;
 
@@ -36,8 +36,8 @@ public class KeycloakServiceImpl implements KeycloakService {
     private final OkHttpClient httpClient;
 
     public KeycloakServiceImpl() {
-        this(EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_KEYCLOAK_URL),
-             EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(CATAPULT_KEYCLOAK_REALM));
+        this(EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(LAUNCHPAD_MISSIONCONTROL_KEYCLOAK_URL),
+             EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(LAUNCHPAD_MISSIONCONTROL_KEYCLOAK_REALM));
     }
 
     public KeycloakServiceImpl(String keyCloakURL, String realm) {
