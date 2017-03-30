@@ -11,7 +11,7 @@
   <artifactId>missioncontrol-web</artifactId>
   <packaging>war</packaging>
   <build>
-    <finalName>kontinuity-catapult</finalName>
+    <finalName>launchpad-missioncontrol</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>

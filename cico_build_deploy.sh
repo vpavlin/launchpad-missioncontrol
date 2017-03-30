@@ -2,13 +2,13 @@
 
 GENERATOR_DOCKER_HUB_USERNAME=rhtobsidianadmin
 REGISTRY_URI="registry.devshift.net"
-REGISTRY_NS="redhat-kontinuity"
-REGISTRY_IMAGE="catapult:latest"
+REGISTRY_NS="openshiftio"
+REGISTRY_IMAGE="launchpad-missioncontrol:latest"
 REGISTRY_URL=${REGISTRY_URI}/${REGISTRY_NS}/${REGISTRY_IMAGE}
 DOCKER_HUB_URL="redhatdevelopers/catapult"
-BUILDER_IMAGE="catapult-builder"
-BUILDER_CONT="catapult-builder-container"
-DEPLOY_IMAGE="catapult-deploy"
+BUILDER_IMAGE="launchpad-missioncontrol-builder"
+BUILDER_CONT="launchpad-missioncontrol-builder-container"
+DEPLOY_IMAGE="launchpad-missioncontrol-deploy"
 
 TARGET_DIR="web/target"
 
@@ -45,7 +45,7 @@ mkdir ${TARGET_DIR}/
 docker run --detach=true --name ${BUILDER_CONT} -t -v $(pwd)/${TARGET_DIR}:/${TARGET_DIR}:Z ${BUILDER_IMAGE} /bin/tail -f /dev/null #FIXME
 
 docker exec ${BUILDER_CONT} mvn -B clean install
-docker exec -u root ${BUILDER_CONT} cp web/target/kontinuity-catapult.war /${TARGET_DIR}
+docker exec -u root ${BUILDER_CONT} cp web/target/launchpad-missioncontrol.war /${TARGET_DIR}
 
 #BUILD DEPLOY IMAGE
 docker build -t ${DEPLOY_IMAGE} -f Dockerfile.deploy .

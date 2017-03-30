@@ -38,7 +38,7 @@ public class HealthResourceIT {
     private URL deploymentUrl;
 
     /**
-     * Deploy the catapult.war as built since we only test via the API endpoints
+     * Deploy the WAR as built since we only test via the API endpoints
      *
      * @return
      */

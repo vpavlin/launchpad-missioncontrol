@@ -23,7 +23,7 @@ class Deployments {
     static WebArchive getMavenBuiltWar() {
         final WebArchive webArchive = ShrinkWrap.createFromZipFile(
                 WebArchive.class,
-                new File("../web/target/kontinuity-catapult.war"));
+                new File("../web/target/launchpad-missioncontrol.war"));
         return webArchive;
     }
 
