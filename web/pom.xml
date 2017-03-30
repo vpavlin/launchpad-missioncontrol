@@ -3,12 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.kontinuity.catapult</groupId>
-    <artifactId>catapult-parent</artifactId>
+    <groupId>io.openshift.appdev.missioncontrol</groupId>
+    <artifactId>missioncontrol-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>catapult-web</artifactId>
+  <artifactId>missioncontrol-web</artifactId>
   <packaging>war</packaging>
   <build>
     <finalName>kontinuity-catapult</finalName>
@@ -25,12 +25,12 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-core-impl</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-core-impl</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-service-keycloak-impl</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-service-keycloak-impl</artifactId>
     </dependency>
   </dependencies>
   <profiles>

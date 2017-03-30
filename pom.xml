@@ -7,8 +7,8 @@
     <artifactId>jboss-parent</artifactId>
     <version>20</version>
   </parent>
-  <groupId>org.kontinuity.catapult</groupId>
-  <artifactId>catapult-parent</artifactId>
+  <groupId>io.openshift.appdev.missioncontrol</groupId>
+  <artifactId>missioncontrol-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
@@ -54,79 +54,79 @@
     <dependencies>
       <!-- Project dependencies -->
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-web</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-web</artifactId>
         <version>${project.version}</version>
         <type>war</type>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-web</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-web</artifactId>
         <version>${project.version}</version>
         <classifier>classes</classifier>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-service-github-api</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-service-github-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-service-github-impl</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-service-github-impl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-service-keycloak-api</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-service-keycloak-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-service-keycloak-impl</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-service-keycloak-impl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-service-openshift-api</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-service-openshift-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-service-openshift-impl</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-service-openshift-impl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-core-api</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-core-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-core-impl</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-core-impl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-base</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-base</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-base</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-base</artifactId>
         <type>test-jar</type>
         <scope>test</scope>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-service-github-impl</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-service-github-impl</artifactId>
         <type>test-jar</type>
         <scope>test</scope>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.kontinuity.catapult</groupId>
-        <artifactId>catapult-service-openshift-impl</artifactId>
+        <groupId>io.openshift.appdev.missioncontrol</groupId>
+        <artifactId>missioncontrol-service-openshift-impl</artifactId>
         <type>test-jar</type>
         <scope>test</scope>
         <version>${project.version}</version>

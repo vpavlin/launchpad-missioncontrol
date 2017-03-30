@@ -3,34 +3,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.kontinuity.catapult</groupId>
-    <artifactId>catapult-parent</artifactId>
+    <groupId>io.openshift.appdev.missioncontrol</groupId>
+    <artifactId>missioncontrol-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
-  <artifactId>catapult-core-impl</artifactId>
+  <artifactId>missioncontrol-core-impl</artifactId>
   <dependencies>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-core-api</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-core-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-service-github-impl</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-service-github-impl</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-service-github-impl</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-service-github-impl</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-service-openshift-impl</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-service-openshift-impl</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-service-openshift-impl</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-service-openshift-impl</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

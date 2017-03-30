@@ -3,14 +3,14 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>catapult-parent</artifactId>
-    <groupId>org.kontinuity.catapult</groupId>
+    <artifactId>missioncontrol-parent</artifactId>
+    <groupId>io.openshift.appdev.missioncontrol</groupId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>catapult-tests</artifactId>
+  <artifactId>missioncontrol-tests</artifactId>
 
   <properties>
     <!--
@@ -40,13 +40,13 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-web</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-web</artifactId>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-web</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-web</artifactId>
       <classifier>classes</classifier>
     </dependency>
     <dependency>
@@ -80,15 +80,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-base</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-base</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.kontinuity.catapult</groupId>
-      <artifactId>catapult-service-github-impl</artifactId>
+      <groupId>io.openshift.appdev.missioncontrol</groupId>
+      <artifactId>missioncontrol-service-github-impl</artifactId>
       <type>test-jar</type>
     </dependency>
     <dependency>
