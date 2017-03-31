@@ -14,14 +14,18 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.openshift.appdev.missioncontrol.service.github.spi.GitHubServiceSpi;
-import io.openshift.appdev.missioncontrol.base.EnvironmentSupport;
 import io.openshift.appdev.missioncontrol.base.identity.Identity;
 import io.openshift.appdev.missioncontrol.base.identity.IdentityVisitor;
 import io.openshift.appdev.missioncontrol.base.identity.TokenIdentity;
 import io.openshift.appdev.missioncontrol.base.identity.UserPasswordIdentity;
+import io.openshift.appdev.missioncontrol.service.github.api.DuplicateWebhookException;
+import io.openshift.appdev.missioncontrol.service.github.api.GitHubRepository;
+import io.openshift.appdev.missioncontrol.service.github.api.GitHubService;
 import io.openshift.appdev.missioncontrol.service.github.api.GitHubWebhook;
 import io.openshift.appdev.missioncontrol.service.github.api.GitHubWebhookEvent;
+import io.openshift.appdev.missioncontrol.service.github.api.NoSuchRepositoryException;
+import io.openshift.appdev.missioncontrol.service.github.api.NoSuchWebhookException;
+import io.openshift.appdev.missioncontrol.service.github.spi.GitHubServiceSpi;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.RemoteAddCommand;
@@ -32,11 +36,6 @@ import org.kohsuke.github.GHEvent;
 import org.kohsuke.github.GHHook;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
-import io.openshift.appdev.missioncontrol.service.github.api.DuplicateWebhookException;
-import io.openshift.appdev.missioncontrol.service.github.api.GitHubRepository;
-import io.openshift.appdev.missioncontrol.service.github.api.GitHubService;
-import io.openshift.appdev.missioncontrol.service.github.api.NoSuchRepositoryException;
-import io.openshift.appdev.missioncontrol.service.github.api.NoSuchWebhookException;
 
 /**
  * Implementation of {@link GitHubService} backed by the Kohsuke GitHub Java Client
@@ -212,10 +211,13 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
 
     @Override
     public void push(GitHubRepository gitHubRepository, File path) throws IllegalArgumentException {
-        String author = EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp("LAUNCHPAD_MISSIONCONTROL_GITHUB_USERNAME");
+        String author = "openshift-bot";
         try (Git repo = Git.init().setDirectory(path).call()) {
             repo.add().addFilepattern(".").call();
-            repo.commit().setMessage("Initial commit").setAuthor(author, author + "@users.noreply.github.com").call();
+            repo.commit().setMessage("Initial commit")
+                    .setAuthor(author, author + "@users.noreply.github.com")
+                    .setCommitter(author, author + "@users.noreply.github.com")
+                    .call();
             RemoteAddCommand add = repo.remoteAdd();
             add.setName("origin");
             add.setUri(new URIish(gitHubRepository.getGitCloneUri().toURL()));
