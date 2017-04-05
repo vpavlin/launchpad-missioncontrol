@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
-GENERATOR_DOCKER_HUB_USERNAME=rhtobsidianadmin
+GENERATOR_DOCKER_HUB_USERNAME=openshiftioadmin
 REGISTRY_URI="registry.devshift.net"
 REGISTRY_NS="openshiftio"
 REGISTRY_IMAGE="launchpad-missioncontrol:latest"
 REGISTRY_URL=${REGISTRY_URI}/${REGISTRY_NS}/${REGISTRY_IMAGE}
-DOCKER_HUB_URL="redhatdevelopers/catapult"
+DOCKER_HUB_URL="openshiftio/launchpad-missioncontrol"
 BUILDER_IMAGE="launchpad-missioncontrol-builder"
 BUILDER_CONT="launchpad-missioncontrol-builder-container"
 DEPLOY_IMAGE="launchpad-missioncontrol-deploy"
