@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
@@ -74,7 +75,7 @@ public class MissionControlResource {
     private MissionControl missionControl;
 
     @Inject
-    private KeycloakService keycloakService;
+    private Instance<KeycloakService> keycloakServiceInstance;
 
     @GET
     @Path(PATH_LAUNCH)
@@ -91,6 +92,7 @@ public class MissionControlResource {
             githubIdentity = getDefaultGithubIdentity();
             openShiftIdentity = getDefaultOpenShiftIdentity();
         } else {
+            KeycloakService keycloakService = this.keycloakServiceInstance.get();
             githubIdentity = keycloakService.getGitHubIdentity(authorization);
             openShiftIdentity = keycloakService.getOpenShiftIdentity(authorization);
         }
@@ -122,6 +124,7 @@ public class MissionControlResource {
             githubIdentity = getDefaultGithubIdentity();
             openShiftIdentity = getDefaultOpenShiftIdentity();
         } else {
+            KeycloakService keycloakService = this.keycloakServiceInstance.get();
             githubIdentity = keycloakService.getGitHubIdentity(authorization);
             openShiftIdentity = keycloakService.getOpenShiftIdentity(authorization);
         }
