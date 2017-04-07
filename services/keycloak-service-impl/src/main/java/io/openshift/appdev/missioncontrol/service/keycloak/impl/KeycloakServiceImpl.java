@@ -23,7 +23,7 @@ import io.openshift.appdev.missioncontrol.service.keycloak.api.KeycloakService;
 @ApplicationScoped
 public class KeycloakServiceImpl implements KeycloakService {
 
-    private static final String TOKEN_URL_TEMPLATE = "%s/auth/realms/%s/broker/%s/token";
+    private static final String TOKEN_URL_TEMPLATE = "%s/realms/%s/broker/%s/token";
 
     public static final String LAUNCHPAD_MISSIONCONTROL_KEYCLOAK_URL = "LAUNCHPAD_KEYCLOAK_URL";
 
