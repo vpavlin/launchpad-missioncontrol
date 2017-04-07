@@ -36,3 +36,13 @@ objects:
       jenkinsPipelineStrategy:
         jenkinsfilePath: Jenkinsfile
       type: JenkinsPipeline
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: launchpad-maven
+    annotations:
+      openshift.io/display-name: 'Jenkins 2 CentOS 7'
+    labels:
+      role: jenkins-slave
+  spec:
+    dockerImageRepository: openshift/jenkins-slave-maven-centos7
