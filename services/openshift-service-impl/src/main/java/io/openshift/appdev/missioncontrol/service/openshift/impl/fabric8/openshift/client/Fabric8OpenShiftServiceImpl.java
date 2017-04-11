@@ -17,6 +17,7 @@ import io.fabric8.kubernetes.api.model.KubernetesList;
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.Parameter;
 import io.fabric8.openshift.api.model.ProjectRequest;
 import io.fabric8.openshift.api.model.Template;
@@ -188,7 +189,8 @@ public final class Fabric8OpenShiftServiceImpl implements OpenShiftService, Open
         final InputStream pipelineTemplateStream = getClass().getResourceAsStream("/pipeline-template.yml");
         List<Parameter> parameters = Arrays.asList(
                 createParameter("SOURCE_REPOSITORY_URL", sourceRepositoryUri.toString()),
-                createParameter("PROJECT", project.getName()));
+                createParameter("PROJECT", project.getName()),
+                createParameter("GITHUB_WEBHOOK_SECRET", new Long(System.currentTimeMillis()).toString()));
         configureProject(project, pipelineTemplateStream, parameters);
     }
 
@@ -203,12 +205,9 @@ public final class Fabric8OpenShiftServiceImpl implements OpenShiftService, Open
                         .equals("BuildConfig")).findFirst();
         if (optionalBuildConfig.isPresent()) {
             final OpenShiftResource buildConfig = optionalBuildConfig.get();
-            // create a webhook on
+            // Construct a URL in form:
             // https://<OS_IP>:<OS_PORT>/oapi/v1/namespaces/<project>/buildconfigs/<BC-name/webhooks/<secret>/github
-            // FIXME: assuming that the webhook secret is
-            // 'Kontinu8' as specified in
-            // https://github.com/redhat-kontinuity/jboss-eap-quickstarts/blob/kontinu8/helloworld/.openshift-ci_cd/pipeline-template.yaml#L18
-            final String secret = "kontinu8";
+            final String secret = buildConfig.getGitHubWebhookSecret();
             final String webhookContext = new StringBuilder().append("/oapi/v1/namespaces/")
                     .append(project.getName()).append("/buildconfigs/")
                     .append(buildConfig.getName()).append("/webhooks/").append(secret).append("/github")
@@ -280,12 +279,34 @@ public final class Fabric8OpenShiftServiceImpl implements OpenShiftService, Open
                 controller.setNamespace(project.getName());
                 final KubernetesList processedTemplate = (KubernetesList) controller.processTemplate(template, OPENSHIFT_PROJECT_TEMPLATE);
                 controller.apply(processedTemplate, OPENSHIFT_PROJECT_TEMPLATE);
+
                 // add all template resources into the project
                 processedTemplate.getItems().stream()
-                        .map(item -> new OpenShiftResourceImpl(item.getMetadata().getName(), item.getKind(), project))
+                        .map(item -> {
+                                    String gitHubWebHookSecret = null;
+                                    if (item instanceof BuildConfig) {
+                                        final BuildConfig bc = (BuildConfig) item;
+                                        gitHubWebHookSecret = bc.getSpec().
+                                                getTriggers().
+                                                stream().
+                                                filter(
+                                                        r -> r.getGithub() != null).
+                                                findFirst().
+                                                get().
+                                                getGithub().
+                                                getSecret();
+                                    }
+                                    final OpenShiftResource resource = new OpenShiftResourceImpl(
+                                            item.getMetadata().getName(),
+                                            item.getKind(),
+                                            project,
+                                            gitHubWebHookSecret);
+                                    return resource;
+                                }
+                        )
                         .forEach(resource -> {
                             log.info("Adding resource '" + resource.getName() + "' (" + resource.getKind()
-                                             + ") to project '" + project.getName() + "'");
+                                    + ") to project '" + project.getName() + "'");
                             ((OpenShiftProjectImpl) project).addResource(resource);
                         });
             }

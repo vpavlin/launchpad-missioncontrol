@@ -28,6 +28,13 @@ public interface OpenShiftResource {
     String getKind();
 
     /**
+     * Returns the GitHub webhook secret,
+     * if this is a {@code BuildConfig} resource of type GitHub, else null
+     * @return
+     */
+    String getGitHubWebhookSecret();
+
+    /**
      * @return the parent {@link OpenShiftProject} of this OpenShift resource
      */
     OpenShiftProject getProject();

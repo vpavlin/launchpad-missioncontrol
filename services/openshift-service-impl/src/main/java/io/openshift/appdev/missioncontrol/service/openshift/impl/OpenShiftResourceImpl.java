@@ -15,11 +15,15 @@ public class OpenShiftResourceImpl implements OpenShiftResource {
      * @param kind   the resource kind
      * @param parent the parent project
      */
-    public OpenShiftResourceImpl(String name, String kind, OpenShiftProject parent) {
+    public OpenShiftResourceImpl(final String name,
+                                 final String kind,
+                                 final OpenShiftProject parent,
+                                 final String gitHubWebhookSecret) {
         super();
         this.name = name;
         this.kind = kind;
         this.project = parent;
+        this.gitHubWebhookSecret = gitHubWebhookSecret;
     }
 
     /**
@@ -37,6 +41,11 @@ public class OpenShiftResourceImpl implements OpenShiftResource {
      */
     private final OpenShiftProject project;
 
+    /**
+     * If a BuildConfig with GitHub trigger, the gitHub webhook secret
+     */
+    private final String gitHubWebhookSecret;
+
     @Override
     public String getName() {
         return name;
@@ -53,12 +62,18 @@ public class OpenShiftResourceImpl implements OpenShiftResource {
     }
 
     @Override
+    public String getGitHubWebhookSecret() {
+        return gitHubWebhookSecret;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((kind == null) ? 0 : kind.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((project == null) ? 0 : project.hashCode());
+        result = prime * result + ((gitHubWebhookSecret == null) ? 0 : gitHubWebhookSecret.hashCode());
         return result;
     }
 
@@ -98,6 +113,13 @@ public class OpenShiftResourceImpl implements OpenShiftResource {
                 return false;
             }
         } else if (!project.equals(other.project)) {
+            return false;
+        }
+        if (gitHubWebhookSecret == null) {
+            if (other.gitHubWebhookSecret != null) {
+                return false;
+            }
+        } else if (!gitHubWebhookSecret.equals(other.gitHubWebhookSecret)) {
             return false;
         }
         return true;
