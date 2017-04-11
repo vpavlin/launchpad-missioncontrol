@@ -50,6 +50,24 @@
     <module>web</module>
     <module>tests</module>
   </modules>
+
+  <scm>
+    <connection>scm:git:git://github.com/openshiftio/launchpad-missioncontrol.git</connection>
+    <developerConnection>scm:git:git@github.com:openshiftio/launchpad-missioncontrol.git</developerConnection>
+    <url>http://github.com/openshiftio/launchpad-missioncontrol</url>
+    <tag>HEAD</tag>
+  </scm>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
   <dependencyManagement>
     <dependencies>
       <!-- Project dependencies -->
@@ -311,6 +329,17 @@
               </execution>
             </executions>
           </plugin>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.7</version>
+            <extensions>true</extensions>
+            <configuration>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <serverId>ossrh</serverId>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
     </profile>
@@ -322,4 +351,5 @@
       </properties>
     </profile>
   </profiles>
+
 </project>
