@@ -312,6 +312,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-release-plugin</artifactId>
             <configuration>
+              <localCheckout>true</localCheckout>
               <autoVersionSubmodules>true</autoVersionSubmodules>
               <pushChanges>false</pushChanges>
             </configuration>
