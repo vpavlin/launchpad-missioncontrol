@@ -57,7 +57,7 @@ public class OpenShiftServiceCdiIT extends OpenShiftServiceTestBase {
 
     @Override
     public OpenShiftService getOpenShiftService() {
-        return this.openShiftServiceFactory.create(OpenShiftTestCredentials.getToken());
+        return this.openShiftServiceFactory.create(OpenShiftTestCredentials.getIdentity());
     }
 
 }

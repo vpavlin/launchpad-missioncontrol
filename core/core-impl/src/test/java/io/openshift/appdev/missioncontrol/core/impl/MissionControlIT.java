@@ -123,7 +123,7 @@ public class MissionControlIT {
     @Before
     @After
     public void cleanupOpenShiftProjects() {
-        OpenShiftService openShiftService = openShiftServiceFactory.create(OpenShiftTestCredentials.getToken());
+        OpenShiftService openShiftService = openShiftServiceFactory.create(OpenShiftTestCredentials.getIdentity());
         openshiftProjectsToDelete.forEach(projectName -> {
             final boolean deleted = ((OpenShiftServiceSpi) openShiftService).deleteProject(projectName);
             if (deleted) {
@@ -139,7 +139,7 @@ public class MissionControlIT {
         final String expectedName = getUniqueProjectName();
         final ForkProjectile projectile = ProjectileBuilder.newInstance()
                 .gitHubIdentity(GitHubTestCredentials.getToken())
-                .openShiftIdentity(OpenShiftTestCredentials.getToken())
+                .openShiftIdentity(OpenShiftTestCredentials.getIdentity())
                 .openShiftProjectName(expectedName)
                 .forkType()
                 .sourceGitHubRepo(GITHUB_SOURCE_REPO_FULLNAME)
@@ -161,7 +161,7 @@ public class MissionControlIT {
         File tempDir = Files.createTempDir();
         final CreateProjectile projectile = ProjectileBuilder.newInstance()
                 .gitHubIdentity(GitHubTestCredentials.getToken())
-                .openShiftIdentity(OpenShiftTestCredentials.getToken())
+                .openShiftIdentity(OpenShiftTestCredentials.getIdentity())
                 .openShiftProjectName(expectedName)
                 .createType()
                 .projectLocation(tempDir.toPath())

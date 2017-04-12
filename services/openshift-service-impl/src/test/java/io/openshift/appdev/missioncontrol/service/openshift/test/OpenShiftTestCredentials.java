@@ -20,9 +20,9 @@ public class OpenShiftTestCredentials {
     private static final String NAME_ENV_VAR_SYSPROP_OPENSHIFT_PASSWORD = "LAUNCHPAD_MISSIONCONTROL_OPENSHIFT_PASSWORD";
 
     /**
-     * @return the Openshift token
+     * @return the Openshift identity
      */
-    public static Identity getToken() {
+    public static Identity getIdentity() {
         return IdentityFactory.createFromUserPassword(
                 EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_OPENSHIFT_USERNAME),
                 EnvironmentSupport.INSTANCE.getRequiredEnvVarOrSysProp(NAME_ENV_VAR_SYSPROP_OPENSHIFT_PASSWORD));

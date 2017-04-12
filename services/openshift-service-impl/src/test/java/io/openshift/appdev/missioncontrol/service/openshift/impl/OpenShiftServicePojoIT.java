@@ -14,6 +14,6 @@ public class OpenShiftServicePojoIT extends OpenShiftServiceTestBase {
 
     @Override
     public OpenShiftService getOpenShiftService() {
-        return new Fabric8OpenShiftServiceFactory().create(OpenShiftTestCredentials.getToken());
+        return new Fabric8OpenShiftServiceFactory().create(OpenShiftTestCredentials.getIdentity());
     }
 }
