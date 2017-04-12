@@ -6,14 +6,14 @@ import javax.enterprise.context.ApplicationScoped;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import io.openshift.appdev.missioncontrol.base.EnvironmentSupport;
 import io.openshift.appdev.missioncontrol.base.identity.Identity;
 import io.openshift.appdev.missioncontrol.base.identity.IdentityFactory;
 import io.openshift.appdev.missioncontrol.service.keycloak.api.KeycloakService;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * The implementation of the {@link KeycloakService}
