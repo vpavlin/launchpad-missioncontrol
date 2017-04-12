@@ -2,16 +2,20 @@ package io.openshift.appdev.missioncontrol.web.api;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -19,18 +23,21 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import io.openshift.appdev.missioncontrol.base.EnvironmentSupport;
 import io.openshift.appdev.missioncontrol.base.identity.Identity;
 import io.openshift.appdev.missioncontrol.base.identity.IdentityFactory;
-import io.openshift.appdev.missioncontrol.core.api.*;
+import io.openshift.appdev.missioncontrol.core.api.CreateProjectile;
+import io.openshift.appdev.missioncontrol.core.api.ForkProjectile;
 import io.openshift.appdev.missioncontrol.core.api.MissionControl;
+import io.openshift.appdev.missioncontrol.core.api.ProjectileBuilder;
+import io.openshift.appdev.missioncontrol.core.api.StatusMessageEvent;
 import io.openshift.appdev.missioncontrol.service.keycloak.api.KeycloakService;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -51,6 +58,8 @@ public class MissionControlResource {
     private static final String PATH_LAUNCH = "/launch";
 
     private static final String PATH_UPLOAD = "/upload";
+
+    private static final String PATH_STATUS = "/status";
 
     /*
      MissionControl Query Parameters
@@ -77,9 +86,16 @@ public class MissionControlResource {
     @Inject
     private Instance<KeycloakService> keycloakServiceInstance;
 
+    @Inject
+    private Event<StatusMessageEvent> event;
+
+    @Resource
+    ManagedExecutorService executorService;
+
     @GET
     @Path(PATH_LAUNCH)
-    public Response fling(
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject fling(
             @Context final HttpServletRequest request,
             @NotNull @QueryParam(QUERY_PARAM_SOURCE_REPO) final String sourceGitHubRepo,
             @NotNull @QueryParam(QUERY_PARAM_GIT_REF) final String gitRef,
@@ -105,16 +121,19 @@ public class MissionControlResource {
                 .gitRef(gitRef)
                 .pipelineTemplatePath(pipelineTemplatePath)
                 .build();
-
         // Fling it
-        Boom boom = missionControl.launch(projectile);
-        return processBoom(boom);
+        executorService.submit(() -> missionControl.launch(projectile));
+        return Json.createObjectBuilder()
+                                   .add("uuid", projectile.getId().toString())
+                                   .add("uuid_link", PATH_STATUS + "/" + projectile.getId().toString())
+                                   .build();
     }
 
     @POST
     @Path(PATH_UPLOAD)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response upload(
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject upload(
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authorization,
             @MultipartForm UploadForm form) {
 
@@ -128,9 +147,8 @@ public class MissionControlResource {
             githubIdentity = keycloakService.getGitHubIdentity(authorization);
             openShiftIdentity = keycloakService.getOpenShiftIdentity(authorization);
         }
-        java.nio.file.Path tempDir = null;
         try {
-            tempDir = Files.createTempDirectory("tmpUpload");
+            final java.nio.file.Path tempDir = Files.createTempDirectory("tmpUpload");
             try (InputStream inputStream = form.getFile()) {
                 FileUploadHelper.unzip(inputStream, tempDir);
                 try (DirectoryStream<java.nio.file.Path> projects = Files.newDirectoryStream(tempDir)) {
@@ -142,36 +160,26 @@ public class MissionControlResource {
                             .gitHubRepositoryDescription(form.getGitHubRepositoryDescription())
                             .projectLocation(project)
                             .build();
-                    Boom boom = missionControl.launch(projectile);
-                    return processBoom(boom);
+                    // Fling it
+                    CompletableFuture.supplyAsync(() -> missionControl.launch(projectile), executorService)
+                            .whenComplete((boom, ex) -> {
+                                if (ex != null) {
+                                    event.fire(new StatusMessageEvent(projectile.getId(), ex));
+                                    log.log(Level.SEVERE, "Error while launching project", ex);
+                                }
+
+                                FileUploadHelper.deleteDirectory(tempDir);
+                    });
+                    return Json.createObjectBuilder()
+                            .add("uuid", projectile.getId().toString())
+                            .add("uuid_link", PATH_STATUS + "/" + projectile.getId().toString())
+                            .build();
                 }
             }
         } catch (final IOException e) {
             throw new WebApplicationException("could not unpack zip file into temp folder", e);
-        } finally {
-            try {
-                FileUploadHelper.deleteDirectory(tempDir);
-            } catch (IOException e) {
-                log.log(Level.SEVERE, "Could not delete " + tempDir, e);
-            }
         }
     }
-
-
-    private Response processBoom(Boom boom) {
-        // Redirect to the console overview page
-        final URI consoleOverviewUri;
-        try {
-            consoleOverviewUri = boom.getCreatedProject().getConsoleOverviewUrl().toURI();
-            if (log.isLoggable(Level.FINEST)) {
-                log.finest("Redirect issued to: " + consoleOverviewUri.toString());
-            }
-        } catch (final URISyntaxException urise) {
-            throw new WebApplicationException("couldn't get console location do you have the environment variable set?", urise);
-        }
-        return Response.temporaryRedirect(consoleOverviewUri).build();
-    }
-
 
     private Identity getDefaultOpenShiftIdentity() {
         // Read from the ENV variables
