@@ -16,6 +16,7 @@ git checkout -b v1 refs/tags/v1
 
 Build and deploy docker image to Docker Hub (requires permissions)
 ```
+mvn clean install
 docker build -t openshiftio/launchpad-missioncontrol:v1 -f Dockerfile.deploy .
 docker push openshiftio/launchpad-missioncontrol:v1
 ```
