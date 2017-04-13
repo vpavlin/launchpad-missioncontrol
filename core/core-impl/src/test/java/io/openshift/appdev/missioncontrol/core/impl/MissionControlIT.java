@@ -191,9 +191,10 @@ public class MissionControlIT {
         log.info("Created OpenShift project: " + foundName);
         openshiftProjectsToDelete.add(foundName);
         Assert.assertEquals(expectedName, foundName);
-        // checking that the Build Config was created.
-        Assertions.assertThat(createdProject.getResources()).isNotNull().hasSize(1);
-        assertTrue(createdProject.getResources().get(0).getKind().equals("BuildConfig"));
+        // checking that the Build Config and the ImageStream were created.
+        Assertions.assertThat(createdProject.getResources()).isNotNull().hasSize(2);
+        assertTrue(createdProject.getResources().get(0).getKind().equals("ImageStream"));
+        assertTrue(createdProject.getResources().get(1).getKind().equals("BuildConfig"));
         assertThat(boom.getGitHubWebhook()).isNotNull();
     }
 
