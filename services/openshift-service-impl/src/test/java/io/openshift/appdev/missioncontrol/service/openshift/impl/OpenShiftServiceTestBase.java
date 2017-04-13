@@ -12,6 +12,7 @@ import io.openshift.appdev.missioncontrol.service.openshift.api.DuplicateProject
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftProject;
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftService;
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftSettings;
+import io.openshift.appdev.missioncontrol.service.openshift.spi.OpenShiftServiceSpi;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Rule;
@@ -86,6 +87,25 @@ public abstract class OpenShiftServiceTestBase implements OpenShiftServiceContai
         final String name = project.getName();
         openShiftService.createProject(name);
         // then using same name should fail with DPE here
+    }
+
+    @Test
+    public void projectExists() {
+        // given
+        final OpenShiftProject project = triggerCreateProject(getUniqueProjectName());
+        // when
+        final String name = project.getName();
+        assertTrue(((OpenShiftServiceSpi) openShiftService).projectExists(name));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void projectExistsShouldFailIfNull() {
+        ((OpenShiftServiceSpi) openShiftService).projectExists(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void projectExistsShouldFailIfEmpty() {
+        ((OpenShiftServiceSpi) openShiftService).projectExists("");
     }
 
     private String getUniqueProjectName() {
