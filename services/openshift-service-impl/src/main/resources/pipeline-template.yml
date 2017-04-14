@@ -55,4 +55,4 @@ objects:
     labels:
       role: jenkins-slave
   spec:
-    dockerImageRepository: openshift/jenkins-slave-maven-centos7
+    dockerImageRepository: openshiftio/launchpad-jenkins-slave
