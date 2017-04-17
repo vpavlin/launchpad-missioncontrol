@@ -22,6 +22,14 @@ public class UploadForm {
     @PartType(MediaType.APPLICATION_FORM_URLENCODED)
     private String gitHubRepositoryDescription;
 
+    @FormParam("mission")
+    @PartType(MediaType.APPLICATION_FORM_URLENCODED)
+    private String mission;
+
+    @FormParam("runtime")
+    @PartType(MediaType.APPLICATION_FORM_URLENCODED)
+    private String runtime;
+
     public String getGitHubRepositoryDescription() {
         return gitHubRepositoryDescription;
     }
@@ -36,5 +44,21 @@ public class UploadForm {
 
     public void setFile(InputStream file) {
         this.file = file;
+    }
+
+    public String getMission() {
+        return mission;
+    }
+
+    public String getRuntime() {
+        return runtime;
+    }
+
+    public void setMission(String mission) {
+        this.mission = mission;
+    }
+
+    public void setRuntime(String runtime) {
+        this.runtime = runtime;
     }
 }
