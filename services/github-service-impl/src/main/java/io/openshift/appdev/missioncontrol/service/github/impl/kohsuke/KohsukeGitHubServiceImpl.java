@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.openshift.appdev.missioncontrol.base.EnvironmentSupport;
 import io.openshift.appdev.missioncontrol.base.identity.Identity;
 import io.openshift.appdev.missioncontrol.base.identity.IdentityVisitor;
 import io.openshift.appdev.missioncontrol.base.identity.TokenIdentity;
@@ -68,6 +69,10 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
     private static final String MSG_NOT_FOUND = "Not Found";
 
     private static final String WEBHOOK_URL = "url";
+
+    private static final String LAUNCHPAD_MISSION_CONTROL_COMMITTER_AUTHOR = "LAUNCHPAD_MISSION_CONTROL_COMMITTER_AUTHOR";
+
+    private static final String LAUNCHPAD_MISSION_CONTROL_COMMITTER_AUTHOR_EMAIL = "LAUNCHPAD_MISSION_CONTROL_COMMITTER_AUTHOR_EMAIL";
 
     private final GitHub delegate;
 
@@ -212,12 +217,13 @@ public final class KohsukeGitHubServiceImpl implements GitHubService, GitHubServ
 
     @Override
     public void push(GitHubRepository gitHubRepository, File path) throws IllegalArgumentException {
-        String author = "openshift-bot";
+        String author = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(LAUNCHPAD_MISSION_CONTROL_COMMITTER_AUTHOR, "openshiftio-launchpad");
+        String authorEmail = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(LAUNCHPAD_MISSION_CONTROL_COMMITTER_AUTHOR_EMAIL, "obsidian-leadership@redhat.com");
         try (Git repo = Git.init().setDirectory(path).call()) {
             repo.add().addFilepattern(".").call();
             repo.commit().setMessage("Initial commit")
-                    .setAuthor(author, author + "@users.noreply.github.com")
-                    .setCommitter(author, author + "@users.noreply.github.com")
+                    .setAuthor(author, authorEmail)
+                    .setCommitter(author, authorEmail)
                     .call();
             RemoteAddCommand add = repo.remoteAdd();
             add.setName("origin");
