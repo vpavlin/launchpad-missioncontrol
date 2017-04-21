@@ -47,6 +47,8 @@ public final class Fabric8OpenShiftServiceImpl implements OpenShiftService, Open
     static {
         // Avoid using ~/.kube/config
         System.setProperty(Config.KUBERNETES_AUTH_TRYKUBECONFIG_SYSTEM_PROPERTY, "false");
+        // Avoid using /var/run/secrets/kubernetes.io/serviceaccount/token
+        System.setProperty(Config.KUBERNETES_AUTH_TRYSERVICEACCOUNT_SYSTEM_PROPERTY, "false");
     }
 
     /**
