@@ -1,8 +1,6 @@
 package io.openshift.appdev.missioncontrol.core.impl;
 
 import java.io.File;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
@@ -12,12 +10,9 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 
-import io.openshift.appdev.missioncontrol.base.identity.Identity;
-import io.openshift.appdev.missioncontrol.base.identity.TokenIdentity;
 import io.openshift.appdev.missioncontrol.core.api.Boom;
 import io.openshift.appdev.missioncontrol.core.api.CreateProjectile;
 import io.openshift.appdev.missioncontrol.core.api.ForkProjectile;
-import io.openshift.appdev.missioncontrol.core.api.LaunchEvent;
 import io.openshift.appdev.missioncontrol.core.api.MissionControl;
 import io.openshift.appdev.missioncontrol.core.api.Projectile;
 import io.openshift.appdev.missioncontrol.core.api.StatusMessage;
@@ -44,8 +39,6 @@ public class MissionControlImpl implements MissionControl {
 
     private static final Logger log = Logger.getLogger(MissionControlImpl.class.getName());
 
-    private static final String LOCAL_USER_ID_PREFIX = "LOCAL_USER_";
-
     @Inject
     private OpenShiftServiceFactory openShiftServiceFactory;
 
@@ -53,10 +46,7 @@ public class MissionControlImpl implements MissionControl {
     private GitHubServiceFactory gitHubServiceFactory;
 
     @Inject
-    private Event<StatusMessageEvent> statusEvent;
-
-    @Inject
-    private Event<LaunchEvent> launchEvent;
+    private Event<StatusMessageEvent> event;
 
     /**
      * {@inheritDoc}
@@ -115,43 +105,19 @@ public class MissionControlImpl implements MissionControl {
         GitHubRepository gitHubRepository = gitHubService.createRepository(repositoryName, repositoryDescription);
         event.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.GITHUB_CREATE, singletonMap("location", gitHubRepository.getHomepage())));
         gitHubService.push(gitHubRepository, path);
-        statusEvent.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.GITHUB_PUSHED));
+        event.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.GITHUB_PUSHED));
 
         OpenShiftService openShiftService = openShiftServiceFactory.create(projectile.getOpenShiftIdentity());
         OpenShiftProject createdProject = openShiftService.createProject(projectName);
-        statusEvent.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.OPENSHIFT_CREATE, singletonMap("location", createdProject.getConsoleOverviewUrl())));
+        event.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.OPENSHIFT_CREATE, singletonMap("location", createdProject.getConsoleOverviewUrl())));
         openShiftService.configureProject(createdProject, gitHubRepository.getGitCloneUri());
-        statusEvent.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.OPENSHIFT_PIPELINE));
+        event.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.OPENSHIFT_PIPELINE));
 
         GitHubWebhook webhook = getGitHubWebhook(gitHubService, openShiftService, gitHubRepository, createdProject);
-        statusEvent.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.GITHUB_WEBHOOK));
-        launchEvent.fire(new LaunchEvent(getUserId(projectile), projectile.getId(), gitHubRepository.getFullName(), createdProject.getName()));
+        event.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.GITHUB_WEBHOOK));
         return new BoomImpl(gitHubRepository, createdProject, webhook);
     }
 
-    private String getUserId(Projectile projectile) {
-        final Identity identity = projectile.getOpenShiftIdentity();
-        String userId;
-        // User ID will be the token
-        if (identity instanceof TokenIdentity) {
-            userId = ((TokenIdentity) identity).getToken();
-        } else {
-            // For users authenticating with user/password (ie. local/Minishift/CDK)
-            // let's identify them by their MAC address (which in a VM is the MAC address
-            // of the VM, or a fake one, but all we can really rely on to uniquely identify
-            // an installation
-            final StringBuilder sb = new StringBuilder();
-            try {
-                sb.append(LOCAL_USER_ID_PREFIX).
-                        append(NetworkInterface.getByInetAddress(
-                                InetAddress.getLocalHost()).getHardwareAddress());
-                userId = sb.toString();
-            } catch (Exception e) {
-                userId = LOCAL_USER_ID_PREFIX + "UNKNOWN";
-            }
-        }
-		return userId;
-    }
 
     private GitHubWebhook getGitHubWebhook(GitHubService gitHubService, OpenShiftService openShiftService,
                                            GitHubRepository gitHubRepository, OpenShiftProject createdProject) {
