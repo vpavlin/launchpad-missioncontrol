@@ -48,8 +48,8 @@ public class KeycloakServiceImpl implements KeycloakService {
     }
 
     /**
-     * GET http://sso.prod-preview.openshift.io/auth/realms/fabric8/broker/openshift-v3/token
-     * authorization: Bearer <keycloakAccessToken>
+     * GET https://sso.openshift.io/auth/realms/launchpad/broker/openshift-v3/token
+     * Authorization: Bearer <keycloakAccessToken>
      *
      * @param keycloakAccessToken the keycloak access token
      * @return
@@ -60,8 +60,8 @@ public class KeycloakServiceImpl implements KeycloakService {
     }
 
     /**
-     * GET http://sso.prod-preview.openshift.io/auth/realms/fabric8/broker/github/token
-     * authorization: Bearer <keycloakAccessToken>
+     * GET https://sso.openshift.io/auth/realms/launchpad/broker/github/token
+     * Authorization: Bearer <keycloakAccessToken>
      *
      * @param keycloakAccessToken
      * @return
@@ -72,8 +72,8 @@ public class KeycloakServiceImpl implements KeycloakService {
     }
 
     /**
-     * GET http://sso.prod-preview.openshift.io/auth/realms/{realm}/broker/{brokerType}/token
-     * authorization: Bearer <keycloakAccessToken>
+     * GET https://sso.openshift.io/auth/realms/launchpad/broker/{brokerType}/token
+     * Authorization: Bearer <keycloakAccessToken>
      *
      * @param url
      * @param token
