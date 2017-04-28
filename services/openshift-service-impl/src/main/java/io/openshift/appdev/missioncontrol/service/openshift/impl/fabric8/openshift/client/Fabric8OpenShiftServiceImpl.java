@@ -280,7 +280,28 @@ public final class Fabric8OpenShiftServiceImpl implements OpenShiftService, Open
                 final Controller controller = new Controller(client);
                 controller.setNamespace(project.getName());
                 final KubernetesList processedTemplate = (KubernetesList) controller.processTemplate(template, OPENSHIFT_PROJECT_TEMPLATE);
-                controller.apply(processedTemplate, OPENSHIFT_PROJECT_TEMPLATE);
+
+                // Retry operation if fails due to some async chimichanga
+                for (int counter = 1; counter <= 10; counter++) {
+                    try {
+                        controller.apply(processedTemplate, OPENSHIFT_PROJECT_TEMPLATE);
+                        if (counter > 1) {
+                            log.log(Level.INFO, "Controller managed to apply changes after " + counter + " tries");
+                        }
+                        break;
+                    } catch (KubernetesClientException kce) {
+                        log.log(Level.WARNING, "Error while applying changes to controller. Attempt #" + counter, kce);
+                        if (counter == 10) {
+                            throw kce;
+                        }
+                    }
+                    try {
+                        Thread.sleep(2000);
+                    } catch (final InterruptedException ie) {
+                        Thread.interrupted();
+                        throw new RuntimeException("Someone interrupted thread while applying changes to controller", ie);
+                    }
+                }
 
                 // add all template resources into the project
                 processedTemplate.getItems().stream()
