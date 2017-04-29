@@ -289,10 +289,10 @@ public final class Fabric8OpenShiftServiceImpl implements OpenShiftService, Open
                             log.log(Level.INFO, "Controller managed to apply changes after " + counter + " tries");
                         }
                         break;
-                    } catch (KubernetesClientException kce) {
-                        log.log(Level.WARNING, "Error while applying changes to controller. Attempt #" + counter, kce);
+                    } catch (final Exception e) {
+                        log.log(Level.WARNING, "Error while applying changes to controller. Attempt #" + counter, e);
                         if (counter == 10) {
-                            throw kce;
+                            throw e;
                         }
                     }
                     try {
