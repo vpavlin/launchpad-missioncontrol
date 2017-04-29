@@ -8,8 +8,8 @@ public enum StatusMessage {
 
     GITHUB_CREATE("Creating your new GitHub repository"),
     GITHUB_PUSHED("Pushing your customized Booster code into the repo"),
-    OPENSHIFT_CREATE("Creating your project on the OpenShift cloud"),
-    OPENSHIFT_PIPELINE("Setting up your Build Pipeline"),
+    OPENSHIFT_CREATE("Creating your project on OpenShift Online"),
+    OPENSHIFT_PIPELINE("Setting up your build pipeline"),
     GITHUB_WEBHOOK("Configuring to trigger builds on Git pushes");
 
     StatusMessage(String message) {
