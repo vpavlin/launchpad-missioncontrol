@@ -10,7 +10,7 @@
   <artifactId>missioncontrol-web</artifactId>
   <packaging>war</packaging>
   <properties>
-    <swarm.version>2017.4.0</swarm.version>
+    <swarm.version>2017.5.0</swarm.version>
   </properties>
   <build>
     <finalName>launchpad-missioncontrol</finalName>
