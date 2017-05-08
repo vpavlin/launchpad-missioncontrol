@@ -79,4 +79,45 @@ public class ValidationResource extends AbstractResource {
         }
     }
 
+    @HEAD
+    @Path("/token/openshift")
+    public Response openShiftTokenExists(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authorization) {
+        Identity openShiftIdentity;
+        try {
+            if (useDefaultIdentities()) {
+                openShiftIdentity = getDefaultOpenShiftIdentity();
+            } else {
+                KeycloakService keycloakService = this.keycloakServiceInstance.get();
+                openShiftIdentity = keycloakService.getOpenShiftIdentity(authorization);
+            }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            openShiftIdentity = null;
+        }
+        if (openShiftIdentity == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            return Response.ok().build();
+        }
+    }
+
+    @HEAD
+    @Path("/token/github")
+    public Response gitHubTokenExists(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authorization) {
+        Identity githubIdentity;
+        try {
+            if (useDefaultIdentities()) {
+                githubIdentity = getDefaultGithubIdentity();
+            } else {
+                KeycloakService keycloakService = this.keycloakServiceInstance.get();
+                githubIdentity = keycloakService.getGitHubIdentity(authorization);
+            }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            githubIdentity = null;
+        }
+        if (githubIdentity == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            return Response.ok().build();
+        }
+    }
 }
