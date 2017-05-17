@@ -3,8 +3,6 @@ package io.openshift.appdev.missioncontrol.tracking;
 import java.io.IOException;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.event.Observes;
 
 import io.openshift.appdev.missioncontrol.core.api.LaunchEvent;
@@ -17,16 +15,13 @@ import io.openshift.appdev.missioncontrol.core.api.LaunchEvent;
  */
 public abstract class AnalyticsProviderBase {
 
-    @Resource
-    protected ManagedExecutorService async;
-
     public void onEvent(@Observes LaunchEvent launch) throws IOException {
         runPostTrackingMessage(
                 launch.getUser(),
                 launch.getId(),
                 launch.getGithubRepo(),
                 launch.getOpenshiftProjectName());
-	}
+    }
 
     /*
      * This is a hook for any base class that wants to provide
@@ -36,9 +31,9 @@ public abstract class AnalyticsProviderBase {
      * threading to the analytics module itself
      */
     protected void runPostTrackingMessage(final String userId,
-                                       final UUID projectileId,
-                                       final String githubRepo,
-                                       final String openshiftProjectName) {
+                                          final UUID projectileId,
+                                          final String githubRepo,
+                                          final String openshiftProjectName) {
         postTrackingMessage(
                 userId,
                 projectileId,
@@ -51,8 +46,8 @@ public abstract class AnalyticsProviderBase {
      * projectile launch information to the aggregator
      */
     protected abstract void postTrackingMessage(final String userId,
-                                       final UUID projectileId,
-                                       final String githubRepo,
-                                       final String openshiftProjectName);
+                                                final UUID projectileId,
+                                                final String githubRepo,
+                                                final String openshiftProjectName);
 }
 
