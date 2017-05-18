@@ -142,9 +142,11 @@ public class MissionControlImpl implements MissionControl {
             // an installation
             final StringBuilder sb = new StringBuilder();
             try {
-                sb.append(LOCAL_USER_ID_PREFIX).
-                        append(NetworkInterface.getByInetAddress(
-                                InetAddress.getLocalHost()).getHardwareAddress());
+                byte[] macAddress = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
+                sb.append(LOCAL_USER_ID_PREFIX);
+                for (int i = 0; i < macAddress.length; i++) {
+                    sb.append(String.format("%02X%s", macAddress[i], (i < macAddress.length - 1) ? "-" : ""));
+                }
                 userId = sb.toString();
             } catch (Exception e) {
                 userId = LOCAL_USER_ID_PREFIX + "UNKNOWN";
