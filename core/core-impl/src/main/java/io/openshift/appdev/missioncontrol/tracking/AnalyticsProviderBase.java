@@ -20,8 +20,10 @@ public abstract class AnalyticsProviderBase {
                 launch.getUser(),
                 launch.getId(),
                 launch.getGithubRepo(),
-                launch.getOpenshiftProjectName());
-    }
+                launch.getOpenshiftProjectName(),
+                launch.getMission(),
+                launch.getRuntime());
+	}
 
     /*
      * This is a hook for any base class that wants to provide
@@ -31,14 +33,18 @@ public abstract class AnalyticsProviderBase {
      * threading to the analytics module itself
      */
     protected void runPostTrackingMessage(final String userId,
-                                          final UUID projectileId,
-                                          final String githubRepo,
-                                          final String openshiftProjectName) {
+                                       final UUID projectileId,
+                                       final String githubRepo,
+                                       final String openshiftProjectName,
+                                       final String mission,
+                                       final String runtime) {
         postTrackingMessage(
                 userId,
                 projectileId,
                 githubRepo,
-                openshiftProjectName);
+                openshiftProjectName,
+                mission,
+                runtime);
     }
 
     /*
@@ -46,8 +52,10 @@ public abstract class AnalyticsProviderBase {
      * projectile launch information to the aggregator
      */
     protected abstract void postTrackingMessage(final String userId,
-                                                final UUID projectileId,
-                                                final String githubRepo,
-                                                final String openshiftProjectName);
+                                       final UUID projectileId,
+                                       final String githubRepo,
+                                       final String openshiftProjectName,
+                                       final String mission,
+                                       final String runtime);
 }
 
