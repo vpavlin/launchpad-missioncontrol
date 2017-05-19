@@ -38,7 +38,7 @@ public class SegmentAnalyticsProvider extends AnalyticsProviderBase {
     private static final String KEY_MISSION = "mission";
     private static final String KEY_RUNTIME = "runtime";
 
-    private static final String LAUNCHPAD_TRACKER_SEGMENT_TOKEN = "LAUNCHPAD_MISSIONCONTROL_SEGMENT_TOKEN";
+    private static final String LAUNCHPAD_TRACKER_SEGMENT_TOKEN = "LAUNCHPAD_TRACKER_SEGMENT_TOKEN";
     private static final String LAUNCHPAD_TRACKER_SEGMENT_TOKEN_DEFAULT = "oOlNiAf3K5MDwpd4ErD2ZPRe6z3Ckk7w";
 
     private Analytics analytics;
