@@ -1,10 +1,14 @@
 package io.openshift.appdev.missioncontrol.core.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +36,7 @@ import io.openshift.appdev.missioncontrol.service.github.spi.GitHubServiceSpi;
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftProject;
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftService;
 import io.openshift.appdev.missioncontrol.service.openshift.api.OpenShiftServiceFactory;
+import org.apache.commons.lang.text.StrSubstitutor;
 
 import static java.util.Collections.singletonMap;
 
@@ -114,6 +119,21 @@ public class MissionControlImpl implements MissionControl {
         String repositoryDescription = projectile.getGitHubRepositoryDescription();
         GitHubRepository gitHubRepository = gitHubService.createRepository(repositoryName, repositoryDescription);
         statusEvent.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.GITHUB_CREATE, singletonMap("location", gitHubRepository.getHomepage())));
+
+        // Add logged user in README.adoc
+        File readmeAdoc = new File(path, "README.adoc");
+        if (readmeAdoc.exists()) {
+            try {
+                String content = new String(Files.readAllBytes(readmeAdoc.toPath()));
+                Map<String, String> values = new HashMap<>();
+                values.put("loggedUser", gitHubService.getLoggedUser().getLogin());
+                String newContent = new StrSubstitutor(values).replace(content);
+                Files.write(readmeAdoc.toPath(), newContent.getBytes());
+            } catch (IOException e) {
+                log.log(Level.SEVERE, "Error while replacing README.adoc variables", e);
+            }
+        }
+
         gitHubService.push(gitHubRepository, path);
         statusEvent.fire(new StatusMessageEvent(projectile.getId(), StatusMessage.GITHUB_PUSHED));
 
@@ -152,7 +172,7 @@ public class MissionControlImpl implements MissionControl {
                 userId = LOCAL_USER_ID_PREFIX + "UNKNOWN";
             }
         }
-		return userId;
+        return userId;
     }
 
     private GitHubWebhook getGitHubWebhook(GitHubService gitHubService, OpenShiftService openShiftService,
