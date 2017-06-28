@@ -39,17 +39,17 @@ public class SegmentAnalyticsProvider extends AnalyticsProviderBase {
     private static final String KEY_RUNTIME = "runtime";
 
     private static final String LAUNCHPAD_TRACKER_SEGMENT_TOKEN = "LAUNCHPAD_TRACKER_SEGMENT_TOKEN";
-    private static final String LAUNCHPAD_TRACKER_SEGMENT_TOKEN_DEFAULT = "oOlNiAf3K5MDwpd4ErD2ZPRe6z3Ckk7w";
 
     private Analytics analytics;
 
     @PostConstruct
     private void initAnalytics() {
         final String token = EnvironmentSupport.INSTANCE.getEnvVarOrSysProp(
-                LAUNCHPAD_TRACKER_SEGMENT_TOKEN,
-                LAUNCHPAD_TRACKER_SEGMENT_TOKEN_DEFAULT);
-        analytics = Analytics.builder(token).networkExecutor(async).build();
-        log.finest(() -> "Using Segment analytics with token: " + token);
+                LAUNCHPAD_TRACKER_SEGMENT_TOKEN);
+        if (token != null && !token.isEmpty()) {
+            analytics = Analytics.builder(token).networkExecutor(async).build();
+            log.finest(() -> "Using Segment analytics with token: " + token);
+        }
 	}
 
     @Override
@@ -59,29 +59,31 @@ public class SegmentAnalyticsProvider extends AnalyticsProviderBase {
                                        final String openshiftProjectName,
                                        final String mission,
                                        final String runtime) {
-        // Create properties
-        final Map<String, String> props = new HashMap<>();
-        props.put(KEY_GITHUB_REPO, githubRepo);
-        props.put(KEY_OPENSHIFT_PROJECT_NAME, openshiftProjectName);
-        props.put(KEY_MISSION, mission);
-        props.put(KEY_RUNTIME, runtime);
-
-        // Create message
-        final MessageBuilder message = TrackMessage.builder(NAME_EVENT_LAUNCH).
-                messageId(projectileId).
-                userId(userId).
-                properties(props);
-
-        // Send to analytics engine
-        analytics.enqueue(message);
-
-        log.finest(() -> "Queued tracking message for: " +
-                "userId: " + userId + ", " +
-                "projectileId: " + projectileId + ", " +
-                "githubRepo: " + githubRepo + ", " +
-                "openshiftProjectName: " + openshiftProjectName + ", " +
-                "mission: " + mission + ", " +
-                "runtime: " + runtime);
+        if (analytics != null) {
+            // Create properties
+            final Map<String, String> props = new HashMap<>();
+            props.put(KEY_GITHUB_REPO, githubRepo);
+            props.put(KEY_OPENSHIFT_PROJECT_NAME, openshiftProjectName);
+            props.put(KEY_MISSION, mission);
+            props.put(KEY_RUNTIME, runtime);
+    
+            // Create message
+            final MessageBuilder message = TrackMessage.builder(NAME_EVENT_LAUNCH).
+                    messageId(projectileId).
+                    userId(userId).
+                    properties(props);
+    
+            // Send to analytics engine
+            analytics.enqueue(message);
+    
+            log.finest(() -> "Queued tracking message for: " +
+                    "userId: " + userId + ", " +
+                    "projectileId: " + projectileId + ", " +
+                    "githubRepo: " + githubRepo + ", " +
+                    "openshiftProjectName: " + openshiftProjectName + ", " +
+                    "mission: " + mission + ", " +
+                    "runtime: " + runtime);
+        }
     }
 
     @Produces
@@ -89,4 +91,3 @@ public class SegmentAnalyticsProvider extends AnalyticsProviderBase {
         return analytics;
     }
 }
-
