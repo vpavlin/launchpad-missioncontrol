@@ -14,6 +14,13 @@ metadata:
 message: "The following service has been created in your project: mission-control.\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/openshiftio"
 labels:
   template: launchpad-missioncontrol
+parameters:
+- name: IMAGE
+  value: openshiftio/launchpad-missioncontrol
+  required: true
+- name: IMAGE_TAG
+  value: latest
+  required: true
 objects:
 - kind: DeploymentConfig
   apiVersion: v1
@@ -84,7 +91,7 @@ objects:
               configMapKeyRef:
                 name: launchpad
                 key: launchpad.tracker.segment.token
-          image: launchpad-missioncontrol
+          image: ${IMAGE}:${IMAGE_TAG}
           imagePullPolicy: Always
           name: launchpad-missioncontrol
           ports:
@@ -126,7 +133,7 @@ objects:
           - launchpad-missioncontrol
         from:
           kind: ImageStreamTag
-          name: launchpad-missioncontrol:latest
+          name: ${IMAGE}:${IMAGE_TAG}
 - kind: Service
   apiVersion: v1
   metadata:
