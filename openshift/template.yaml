@@ -126,14 +126,6 @@ objects:
     test: false
     triggers:
     - type: ConfigChange
-    - type: ImageChange 
-      imageChangeParams:
-        automatic: true
-        containerNames:
-          - launchpad-missioncontrol
-        from:
-          kind: ImageStreamTag
-          name: ${IMAGE}:${IMAGE_TAG}
 - kind: Service
   apiVersion: v1
   metadata:
