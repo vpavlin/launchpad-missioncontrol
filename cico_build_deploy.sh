@@ -9,6 +9,7 @@ DOCKER_HUB_URL="openshiftio/launchpad-missioncontrol"
 BUILDER_IMAGE="launchpad-missioncontrol-builder"
 BUILDER_CONT="launchpad-missioncontrol-builder-container"
 DEPLOY_IMAGE="launchpad-missioncontrol-deploy"
+TAG_LENGTH=7
 
 TARGET_DIR="web/target"
 
@@ -64,7 +65,7 @@ docker build -t ${DEPLOY_IMAGE} -f Dockerfile.deploy .
 
 #PUSH
 if [ -z $CICO_LOCAL ]; then
-    TAG=$(echo $GIT_COMMIT | cut -c1-6)
+    TAG=$(echo $GIT_COMMIT | cut -c1-${TAG_LENGTH})
     tag_push "${REGISTRY_URL}:${TAG}"
     tag_push "${REGISTRY_URL}:latest"
 
