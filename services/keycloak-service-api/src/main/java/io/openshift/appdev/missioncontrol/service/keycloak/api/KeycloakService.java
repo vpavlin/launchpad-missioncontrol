@@ -1,5 +1,7 @@
 package io.openshift.appdev.missioncontrol.service.keycloak.api;
 
+import java.util.Optional;
+
 import io.openshift.appdev.missioncontrol.base.identity.Identity;
 
 /**
@@ -24,4 +26,13 @@ public interface KeycloakService {
      * @return the github Identity token assigned to the given keycloak access token
      */
     Identity getGitHubIdentity(String token);
+
+    /**
+     * Grabs the {@link Identity} for the specified provider
+     *
+     * @param provider The identity provider to use
+     * @param token    the keycloak access token
+     * @return an {@link Optional} containing an {@link Identity}
+     */
+    Optional<Identity> getIdentity(String provider, String token);
 }
